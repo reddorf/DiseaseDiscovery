@@ -1,8 +1,7 @@
 package com
 
 class Symptom {
-	static hasMany = [disease : Disease]
-	static belongsTo = Disease
+	static hasMany = [symptomDisease : SymptomDisease]
 	
 	long id
 	String name
@@ -11,4 +10,8 @@ class Symptom {
 		id nullable: false
 		name blank: false, nullable: false
     }
+	
+	def diseases() {
+		return symptomDisease.collect{ it.disease }
+	}
 }

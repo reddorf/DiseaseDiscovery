@@ -14,4 +14,15 @@ class Symptom {
 	def diseases() {
 		return symptomDisease.collect{ it.disease }
 	}
+	
+	// Helper methods
+	def addDisease(Disease disease, freq) {
+		SymptomDisease.link(this, disease, freq)
+		return diseases()
+	}
+	
+	def removeDisease(Disease disease) {
+		SymptomDisease.unlink(this, disease)
+		return diseases()
+	}
 }

@@ -7,6 +7,7 @@ class SymptomDisease {
 	float symptomFreq
 	
     static constraints = {
+		symptomFreq nullable: true
     }
 	
 	static SymptomDisease link(disease, symptom, freq) {

@@ -16,7 +16,7 @@ class Symptom {
 	}
 	
 	// Helper methods
-	def addDisease(Disease disease, freq) {
+	def addDisease(Disease disease, freq = null) {
 		SymptomDisease.link(this, disease, freq)
 		return diseases()
 	}

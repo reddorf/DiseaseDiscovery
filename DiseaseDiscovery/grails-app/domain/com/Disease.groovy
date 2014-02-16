@@ -16,7 +16,7 @@ class Disease {
 		return symptomDisease.collect{ it.symptom }
 	}
 	
-	def addSymptom(Symptom symptom, freq) { 
+	def addSymptom(Symptom symptom, freq = null) { 
 		SymptomDisease.link(this, symptom, freq) 
 		return symptoms() 
 	}

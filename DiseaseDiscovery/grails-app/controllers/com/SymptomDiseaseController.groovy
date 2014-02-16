@@ -6,6 +6,8 @@ class SymptomDiseaseController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
+	def medicalInformationService
+	
     def index() {
         redirect(action: "list", params: params)
     }
@@ -99,4 +101,8 @@ class SymptomDiseaseController {
             redirect(action: "show", id: id)
         }
     }
+	
+	def populateDB(){
+		medicalInformationService.populateDB()
+	}
 }

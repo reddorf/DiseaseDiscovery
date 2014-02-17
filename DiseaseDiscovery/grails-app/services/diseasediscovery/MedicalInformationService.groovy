@@ -46,7 +46,7 @@ class MedicalInformationService {
 		def symp, disease, name, freq
 		
 		def diseaseName
-		def symptomList = []
+		def symptoms = [:]
 		def symptomName
 		def symptomFreq = -1
 		
@@ -82,7 +82,7 @@ class MedicalInformationService {
 				throws SAXException {
 			if (qname.equals("DisorderSign")) {
 				symp = false
-				symptomList << ["${symptomName}" : symptomFreq]
+				symptoms.put("${symptomName}", symptomFreq)
 				symptomName = ""
 				symptomFreq = -1
 			}
@@ -91,9 +91,9 @@ class MedicalInformationService {
 			}
 			else if (qname.equals("Disorder")) {
 				disease = false
-				diseases.put(diseaseName, symptomList)
+				diseases.put(diseaseName, symptoms)
 				diseaseName = ""
-				symptomList = []
+				symptoms = [:]
 			}
 			else if (qname.equals("SignFreq")) {
 				freq = false
@@ -114,8 +114,8 @@ class MedicalInformationService {
 		parser.setContentHandler(mb)
 		parser.parse(ORPHANET_ROOT_URL)
 		
-		mb.getModel().each { diseaseName, symptomList -> 	
-			println "[${diseaseName} : ${symptomList}]"
+		mb.getModel().each { diseaseName, symptoms -> 	
+			println "[${diseaseName} : ${symptoms}]"
 			diseaseName = diseaseName.replaceAll("[\"]+", "'")
 			def newDisease = Disease.findByName(diseaseName)
 			
@@ -124,19 +124,17 @@ class MedicalInformationService {
 				newDisease = new Disease(name:diseaseName).save()
 			}
 			
-			symptomList.each { 
-				it.each {name, freq ->
-					def symptomName = name.replaceAll("[\"]+", "'")
-					def newSymptom = Symptom.findByName(symptomName)
-					
-					if (!newSymptom) {
-						newSymptom = new Symptom(name: symptomName).save()
-					}
-					
-					newDisease.addSymptom(newSymptom, freq == "Occasional" ? 0.3333 : freq == "Frequent" ? 0.6666 : 1.0000)
-					
-					//new SymptomDisease(disease: newDisease, symptom: newSymptom, symptomFreq: freq).save()
+			symptoms.each { name, freq ->
+				def symptomName = name.replaceAll("[\"]+", "'")
+				def newSymptom = Symptom.findByName(symptomName)
+				
+				if (!newSymptom) {
+					newSymptom = new Symptom(name: symptomName).save()
 				}
+				
+				newDisease.addSymptom(newSymptom, freq == "Occasional" ? 0.3333f : freq == "Frequent" ? 0.6666f : 1.0000f)
+				
+				//new SymptomDisease(disease: newDisease, symptom: newSymptom, symptomFreq: freq).save()
 			}
 		}
 	}

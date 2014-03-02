@@ -7,6 +7,7 @@ class SymptomDiseaseController {
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	def medicalInformationService
+	def wekaService
 	
     def index() {
         redirect(action: "list", params: params)
@@ -104,5 +105,9 @@ class SymptomDiseaseController {
 	
 	def populateDB(){
 		medicalInformationService.populateDB()
+	}
+	
+	def makePrediction(){
+		wekaService.getFile()
 	}
 }

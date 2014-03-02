@@ -11,13 +11,17 @@ class SymptomDisease {
     }
 	
 	static SymptomDisease link(disease, symptom, freq) {
+
 		def rel = SymptomDisease.findByDiseaseAndSymptom(disease, symptom)
 		if (!rel)
 		{
 			rel = new SymptomDisease(symptomFreq: freq)
 			disease?.addToSymptomDisease(rel)
 			symptom?.addToSymptomDisease(rel)
-			rel.save()
+			if(!rel.save(flush: true)){
+				println "FAILED SAVE"
+			}
+			println "Disease saved"
 		}
 		
 		return rel

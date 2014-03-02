@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<%@ page import="diseaseDiscovery.WekaService" %>
+<%
+    def wekaService = grailsApplication.classLoader.loadClass('diseaseDiscovery.WekaService').newInstance()
+%>
+
 <html>
 	<head>
 		<meta name="layout" content="main"/>
@@ -117,6 +122,7 @@
 					</g:each>
 					
 					<g:link controller="SymptomDisease" action="populateDB">Populate DB</g:link>
+					<g:link controller="SymptomDisease" action="makePrediction">Make prediction</g:link>
 				</ul>
 			</div>
 		</div>

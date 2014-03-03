@@ -4,44 +4,91 @@ import com.Disease
 import com.Symptom
 import com.SymptomDisease
 
+import weka.core.Instance
+import weka.core.Instances
+import weka.core.Attribute
+import weka.core.FastVector
+import weka.classifiers.bayes.NaiveBayes
+import weka.core.Instance
+import weka.core.Utils
+
 class WekaService {
 
-	def getFile() {
-		def file = createInputFile()
+	def createModel(){
+		println "Creating WEKA model."
 		
-		println file
+		println "  >Fetching data..."
+		def model = initializeWeka()
+		def data = defineDataset()
+		println "  >Data fetched. Building model..."
 		
-		return file	
+		model.buildClassifier(data)
+		
+		println "WEKA model created"
 	}
 	
-    def createInputFile() {
-		def header = createHeader()
-		def body = createBody()
+	private initializeWeka(){
+//		String[] options = Utils.splitOptions("-c 1")
 		
-		// TODO: save file with header and body
-		return header + body
-    }
+		def model = new NaiveBayes()
+//		model.setOptions(options)
+		
+		return model
+	}
 	
-	def createHeader() {
-		def relation = "@relation DISEASES\n"
-		def diseases = "@attribute disease_id {"
-		def symptoms = ""
+	private defineDataset(){
+		def header = getHeader()
+		def dataset =  new Instances("DISEASES", header, 0)
+		
+		getInstances(dataset).each{
+			dataset.add(it)
+		}
+		
+		dataset.setClassIndex(0)
+		return dataset//dataset.randomize(dataset.getRandomNumberGenerator(99999))
+	}
+	
+	private getHeader(){
+		def attributes = new FastVector()
+		
+		def diseaseLabels = new FastVector()
+		FastVector symptomLabels = new FastVector()
+		symptomLabels.addElement("y")
+		symptomLabels.addElement("n")
 		
 		Disease.getAll().each{ disease ->
-			diseases += disease.id + ", " 
+			diseaseLabels.addElement(disease.id as String)
 		}
-		diseases = diseases[0..-3] + "}\n"
+		attributes.addElement(new Attribute("disease_id", diseaseLabels))
 		
 		Symptom.getAll().each{ symptom ->
-			symptoms += "@attribute s${symptom.id} {y,n}\n"
+			attributes.addElement(new Attribute("s${symptom.id}", symptomLabels))
 		}
 		
-		return relation + diseases + symptoms
+		return attributes
 	}
 	
-	def createBody() {
-		def data = "@data\n"
+	private getInstances(dataset){
+		def instances = []
+		Disease.getAll().each{ disease ->
+			def values = new double[dataset.numAttributes()]
+			def symptoms = disease.symptoms()
+			
+			values[0] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
+			def i = 1
+			Symptom.getAll().each{ symptom ->
+				if(symptom in symptoms){
+					values[i] = dataset.attribute("s${symptom.id}").indexOfValue("y")
+				} else {
+					values[i] = dataset.attribute("s${symptom.id}").indexOfValue("n")
+				}
+				
+				i++
+			}	
+			
+			instances << new Instance(1.0, values)		
+		}
 		
-		return data
+		return instances
 	}
 }

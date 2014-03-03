@@ -4,13 +4,13 @@ import com.Disease
 import com.Symptom
 import com.SymptomDisease
 
-import weka.core.Instance
 import weka.core.Instances
 import weka.core.Attribute
 import weka.core.FastVector
 import weka.classifiers.bayes.NaiveBayes
 import weka.core.Instance
 import weka.core.Utils
+import weka.classifiers.Evaluation
 
 class WekaService {
 
@@ -18,11 +18,10 @@ class WekaService {
 		println "Creating WEKA model."
 		
 		println "  >Fetching data..."
-		def model = initializeWeka()
 		def data = defineDataset()
 		println "  >Data fetched. Building model..."
 		
-		model.buildClassifier(data)
+		def model = getModel(data)
 		
 		println "WEKA model created"
 	}
@@ -92,5 +91,35 @@ class WekaService {
 		}
 		
 		return instances
+	}
+	
+	private getModel(data){
+		def folds = data.numInstances() < 10 ? data.numInstances() : 10
+		
+		def bestModel
+		def bestEvaluation
+		def model
+		def evaluator
+		def randData = new Instances(data)
+		randData.randomize(data.getRandomNumberGenerator(99999))	
+		
+		for(def i = 0; i < folds; i++){
+			def trainSet = randData.trainCV(folds, i)
+			def validationSet = randData.testCV(folds, i)
+			
+			model = initializeWeka()
+			model.buildClassifier(trainSet)
+			
+			evaluator = new Evaluation(trainSet)
+			evaluator.evaluateModel(model, validationSet)
+			
+			if(bestEvaluation?.avgCost() > evaluator.avgCost() || (!bestEvaluation && !bestModel)){
+				bestModel = model
+				bestEvaluation = evaluator
+			}
+		}
+
+//		println bestModel.toString()
+		return bestModel
 	}
 }

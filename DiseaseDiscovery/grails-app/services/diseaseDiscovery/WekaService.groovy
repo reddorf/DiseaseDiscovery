@@ -45,7 +45,9 @@ class WekaService {
 		}
 		
 		dataset.setClassIndex(0)
-		return dataset//dataset.randomize(dataset.getRandomNumberGenerator(99999))
+		dataset.randomize(dataset.getRandomNumberGenerator(99999))
+		
+		return dataset
 	}
 	
 	private getHeader(){

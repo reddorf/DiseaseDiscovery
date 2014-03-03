@@ -1,8 +1,8 @@
 package diseaseDiscovery.services
 
-import com.Disease
-import com.Symptom
-import com.SymptomDisease
+import diseaseDiscovery.domain.com.Disease
+import diseaseDiscovery.domain.com.Symptom
+import diseaseDiscovery.domain.com.SymptomDisease
 
 import weka.core.Instances
 import weka.core.Attribute
@@ -11,6 +11,7 @@ import weka.classifiers.bayes.NaiveBayes
 import weka.core.Instance
 import weka.core.Utils
 import weka.classifiers.Evaluation
+import weka.core.SerializationHelper
 
 class WekaService {
 
@@ -24,6 +25,8 @@ class WekaService {
 		def model = getModel(data)
 		
 		println "WEKA model created"
+		
+//		saveModel(model)
 	}
 	
 	private initializeWeka(){
@@ -121,5 +124,9 @@ class WekaService {
 
 //		println bestModel.toString()
 		return bestModel
+	}
+	
+	private saveModel(model){
+		SerializationHelper.write("/bayes.model", model)
 	}
 }

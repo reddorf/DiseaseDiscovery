@@ -1,5 +1,5 @@
 
-<%@ page import="com.SymptomDisease" %>
+<%@ page import="diseaseDiscovery.domain.com.SymptomDisease" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -23,6 +23,15 @@
 			</g:if>
 			<ol class="property-list symptomDisease">
 			
+				<g:if test="${symptomDiseaseInstance?.symptomFreq}">
+				<li class="fieldcontain">
+					<span id="symptomFreq-label" class="property-label"><g:message code="symptomDisease.symptomFreq.label" default="Symptom Freq" /></span>
+					
+						<span class="property-value" aria-labelledby="symptomFreq-label"><g:fieldValue bean="${symptomDiseaseInstance}" field="symptomFreq"/></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${symptomDiseaseInstance?.disease}">
 				<li class="fieldcontain">
 					<span id="disease-label" class="property-label"><g:message code="symptomDisease.disease.label" default="Disease" /></span>
@@ -37,15 +46,6 @@
 					<span id="symptom-label" class="property-label"><g:message code="symptomDisease.symptom.label" default="Symptom" /></span>
 					
 						<span class="property-value" aria-labelledby="symptom-label"><g:link controller="symptom" action="show" id="${symptomDiseaseInstance?.symptom?.id}">${symptomDiseaseInstance?.symptom?.encodeAsHTML()}</g:link></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${symptomDiseaseInstance?.symptomFreq}">
-				<li class="fieldcontain">
-					<span id="symptomFreq-label" class="property-label"><g:message code="symptomDisease.symptomFreq.label" default="Symptom Freq" /></span>
-					
-						<span class="property-value" aria-labelledby="symptomFreq-label"><g:fieldValue bean="${symptomDiseaseInstance}" field="symptomFreq"/></span>
 					
 				</li>
 				</g:if>

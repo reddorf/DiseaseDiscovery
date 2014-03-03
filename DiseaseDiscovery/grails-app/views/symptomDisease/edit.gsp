@@ -1,4 +1,4 @@
-<%@ page import="com.SymptomDisease" %>
+<%@ page import="diseaseDiscovery.domain.com.SymptomDisease" %>
 <!DOCTYPE html>
 <html>
 	<head>

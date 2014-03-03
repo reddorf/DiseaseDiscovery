@@ -1,5 +1,5 @@
 
-<%@ page import="com.SymptomDisease" %>
+<%@ page import="diseaseDiscovery.domain.com.SymptomDisease" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -24,11 +24,11 @@
 				<thead>
 					<tr>
 					
+						<g:sortableColumn property="symptomFreq" title="${message(code: 'symptomDisease.symptomFreq.label', default: 'Symptom Freq')}" />
+					
 						<th><g:message code="symptomDisease.disease.label" default="Disease" /></th>
 					
 						<th><g:message code="symptomDisease.symptom.label" default="Symptom" /></th>
-					
-						<g:sortableColumn property="symptomFreq" title="${message(code: 'symptomDisease.symptomFreq.label', default: 'Symptom Freq')}" />
 					
 					</tr>
 				</thead>
@@ -36,11 +36,11 @@
 				<g:each in="${symptomDiseaseInstanceList}" status="i" var="symptomDiseaseInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${symptomDiseaseInstance.id}">${fieldValue(bean: symptomDiseaseInstance, field: "disease")}</g:link></td>
+						<td><g:link action="show" id="${symptomDiseaseInstance.id}">${fieldValue(bean: symptomDiseaseInstance, field: "symptomFreq")}</g:link></td>
+					
+						<td>${fieldValue(bean: symptomDiseaseInstance, field: "disease")}</td>
 					
 						<td>${fieldValue(bean: symptomDiseaseInstance, field: "symptom")}</td>
-					
-						<td>${fieldValue(bean: symptomDiseaseInstance, field: "symptomFreq")}</td>
 					
 					</tr>
 				</g:each>

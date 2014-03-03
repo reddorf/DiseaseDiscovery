@@ -10,9 +10,9 @@ import org.xml.sax.Attributes
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 
-import com.Disease
-import com.Symptom
-import com.SymptomDisease
+import diseaseDiscovery.domain.com.Disease
+import diseaseDiscovery.domain.com.Symptom
+import diseaseDiscovery.domain.com.SymptomDisease
 
 class MedicalInformationService {
 	/* TODO: Put these in external config file */

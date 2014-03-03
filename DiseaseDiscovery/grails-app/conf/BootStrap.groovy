@@ -1,6 +1,6 @@
-import auth.Role
-import auth.User
-import auth.UserRole
+import diseaseDiscovery.domain.auth.Role
+import diseaseDiscovery.domain.auth.User
+import diseaseDiscovery.domain.auth.UserRole
 
 class BootStrap {
 

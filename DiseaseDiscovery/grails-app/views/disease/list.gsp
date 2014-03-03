@@ -1,5 +1,5 @@
 
-<%@ page import="com.Disease" %>
+<%@ page import="diseaseDiscovery.domain.com.Disease" %>
 <!DOCTYPE html>
 <html>
 	<head>

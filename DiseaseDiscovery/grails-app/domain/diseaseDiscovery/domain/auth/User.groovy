@@ -1,4 +1,4 @@
-package auth
+package diseaseDiscovery.domain.auth
 
 class User {
 

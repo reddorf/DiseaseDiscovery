@@ -1,4 +1,4 @@
-package diseaseDiscovery
+package diseaseDiscovery.services
 
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext

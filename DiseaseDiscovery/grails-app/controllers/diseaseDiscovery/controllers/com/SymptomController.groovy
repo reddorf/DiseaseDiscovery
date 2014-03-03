@@ -1,6 +1,8 @@
-package com
+package diseaseDiscovery.controllers.com
 
 import org.springframework.dao.DataIntegrityViolationException
+
+import diseaseDiscovery.domain.com.Symptom;
 
 class SymptomController {
 

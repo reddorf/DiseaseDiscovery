@@ -1,4 +1,4 @@
-package auth
+package diseaseDiscovery.domain.auth
 
 import org.apache.commons.lang.builder.HashCodeBuilder
 

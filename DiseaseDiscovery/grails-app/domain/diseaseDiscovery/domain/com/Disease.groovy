@@ -1,4 +1,4 @@
-package com
+package diseaseDiscovery.domain.com
 
 class Disease {
 	static hasMany = [symptomDisease : SymptomDisease]

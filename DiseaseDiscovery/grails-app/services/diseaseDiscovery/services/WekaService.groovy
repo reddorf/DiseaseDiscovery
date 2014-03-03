@@ -1,4 +1,4 @@
-package diseaseDiscovery
+package diseaseDiscovery.services
 
 import com.Disease
 import com.Symptom

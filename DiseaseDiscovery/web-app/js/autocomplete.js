@@ -16,7 +16,7 @@ function setupSymptom(dataGetterLink) {
             $("#symptom_name").autocomplete({
                 source: data,
                 select: function (event, ui){
-                    $('#symptom_id').val(ui.symptom.id);
+                    $('#symptom_id').val(ui.item.id);
                 }
             });
         }

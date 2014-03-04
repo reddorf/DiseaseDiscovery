@@ -3,6 +3,7 @@ package diseaseDiscovery.controllers.com
 import org.springframework.dao.DataIntegrityViolationException
 
 import diseaseDiscovery.domain.com.Symptom;
+import grails.converters.JSON
 
 class SymptomController {
 
@@ -101,4 +102,8 @@ class SymptomController {
             redirect(action: "show", id: id)
         }
     }
+	
+	def getSymptoms(){
+		render Symptom.list() as JSON
+	}
 }

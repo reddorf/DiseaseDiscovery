@@ -12,10 +12,11 @@ import weka.core.Instance
 import weka.core.Utils
 import weka.classifiers.Evaluation
 import weka.core.SerializationHelper
+import weka.gui.graphvisualizer.GraphVisualizer
 
 class WekaService {
 
-	def createModel(){
+	def createModel(graph = false){
 		println "Creating WEKA model."
 		
 		if(!goodToGo()) {
@@ -23,15 +24,14 @@ class WekaService {
 			return null
 		}
 		
-		println "  >Fetching data..."
 		def data = defineDataset()
-		println "  >Data fetched. Building model..."
-		
 		def model = getModel(data)
 		
 		println "WEKA model created"
 		
 		saveModel(model)
+
+		return model
 	}
 	
 	private initializeWeka(){
@@ -44,6 +44,8 @@ class WekaService {
 	}
 	
 	private defineDataset(){
+		println "  >Fetching data..."
+		
 		def header = getHeader()
 		def dataset =  new Instances("DISEASES", header, 0)
 		
@@ -54,6 +56,7 @@ class WekaService {
 		dataset.setClassIndex(0)
 		dataset.randomize(dataset.getRandomNumberGenerator(99999))
 		
+		println "  >Data fetched."
 		return dataset
 	}
 	
@@ -102,7 +105,9 @@ class WekaService {
 	}
 	
 	private getModel(data){
-		def folds = data.numInstances() < 10 ? data.numInstances() > 1 ? data.numInstances() : 1 : 10
+		println "  >Building model..."
+		
+		def folds = data.numInstances() < 10 ? data.numInstances() : 10
 		
 		def bestModel
 		def bestEvaluation
@@ -127,6 +132,7 @@ class WekaService {
 			}
 		}
 
+		println "  >Model built."
 //		println bestModel.toString()
 		return bestModel
 	}
@@ -136,6 +142,6 @@ class WekaService {
 	}
 	
 	private goodToGo(){
-		return Disease.count() && Symptom.count() && SymptomDisease.count()
+		return Disease.count() > 1 && Symptom.count() > 1 && SymptomDisease.count() > 1
 	}
 }

@@ -110,6 +110,6 @@ class SymptomDiseaseController {
 	}
 	
 	def makePrediction(){
-		wekaService.createModel()
+		render wekaService.createModel().toString()
 	}
 }

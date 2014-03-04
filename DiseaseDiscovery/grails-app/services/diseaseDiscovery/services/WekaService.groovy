@@ -18,6 +18,11 @@ class WekaService {
 	def createModel(){
 		println "Creating WEKA model."
 		
+		if(!goodToGo()) {
+			println "Dataset not usable. Aborting."
+			return null
+		}
+		
 		println "  >Fetching data..."
 		def data = defineDataset()
 		println "  >Data fetched. Building model..."
@@ -26,7 +31,7 @@ class WekaService {
 		
 		println "WEKA model created"
 		
-//		saveModel(model)
+		saveModel(model)
 	}
 	
 	private initializeWeka(){
@@ -97,7 +102,7 @@ class WekaService {
 	}
 	
 	private getModel(data){
-		def folds = data.numInstances() < 10 ? data.numInstances() : 10
+		def folds = data.numInstances() < 10 ? data.numInstances() > 1 ? data.numInstances() : 1 : 10
 		
 		def bestModel
 		def bestEvaluation
@@ -127,6 +132,10 @@ class WekaService {
 	}
 	
 	private saveModel(model){
-		SerializationHelper.write("/bayes.model", model)
+		SerializationHelper.write("bayes.model", model)
+	}
+	
+	private goodToGo(){
+		return Disease.count() && Symptom.count() && SymptomDisease.count()
 	}
 }

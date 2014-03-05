@@ -16,12 +16,12 @@
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">
 		<g:layoutHead/>
 		
-		<link href="css/bootstrap.css" rel="stylesheet" media="screen">
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script> 
-		<script src="js/bootstrap.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 		
 		<r:layoutResources />
 	</head>
@@ -34,3 +34,4 @@
 		<r:layoutResources />
 	</body>
 </html>
+ 

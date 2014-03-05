@@ -11,8 +11,9 @@
 	</g:javascript>
 </head>
 <body>
-	<input style="float: right; margin: 0px 10px 10px 0px;" type="text" 
-		   name="symptom" id="symptom_name" 
-		   value="" placeholder="Enter symptom..." />
-	<input type="hidden" id="symptom_id" name="symptom_id" value="" />
+	<label for="symptom_name">
+		<input type="text" name="symptom" id="symptom_name" 
+			   value="" placeholder="Enter symptom..." />
+		<input type="hidden" id="symptom_id" name="symptom_id" value="" />
+	</label>
 </body>

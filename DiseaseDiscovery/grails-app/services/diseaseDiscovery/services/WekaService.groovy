@@ -13,9 +13,12 @@ import weka.core.Utils
 import weka.classifiers.Evaluation
 import weka.core.SerializationHelper
 import weka.gui.graphvisualizer.GraphVisualizer
+import weka.core.SerializationHelper
 
 class WekaService {
-
+	def MAX_INSTANCES = 50 // TODO: find useful number
+	def classifier
+	
 	def createModel(graph = false){
 		println "Creating WEKA model."
 		
@@ -24,15 +27,47 @@ class WekaService {
 			return null
 		}
 		
-		def data = defineDataset()
+		def data = defineTrainingDataset()
 		def model = getModel(data)
 		
 		println "WEKA model created"
 		
 		saveModel(model)
 
+		classifier = model
 		return model
 	}
+	
+	def makePrediction(symptoms){
+		println "Making prediction..."
+		def model = SerializationHelper.read("bayes.model")
+		if(!model) return false
+		println "\t>Model loaded"
+		def data = getPredictionDataset(symptoms)
+		
+		data.setClassIndex(0)
+		
+		println "\t>Data loaded"
+		println data.numInstances()
+		println data
+		def prediction = new Instances(data)
+		def label = model.classifyInstance(data.instance(0))
+		prediction.instance(0).setClassValue(label)	
+		
+		println prediction.toString()
+		println "$label -> ${data.classAttribute().value((int) label)}"
+		println "Prediction finished."
+		
+		return data.classAttribute().value((int) label)
+		
+//		def pred = model.classifyInstance(data.instance(0));
+//		def dist = model.distributionForInstance(data.instance(0));
+//		println data.classAttribute().value((int) pred)
+//		println "--"
+//		println Utils.arrayToString(dist)
+		
+	}
+	
 	
 	private initializeWeka(){
 //		String[] options = Utils.splitOptions("-c 1")
@@ -43,13 +78,13 @@ class WekaService {
 		return model
 	}
 	
-	private defineDataset(){
+	private defineTrainingDataset(){
 		println "  >Fetching data..."
 		
 		def header = getHeader()
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getInstances(dataset).each{
+		getTrainingInstances(dataset, MAX_INSTANCES).each{
 			dataset.add(it)
 		}
 		
@@ -80,15 +115,19 @@ class WekaService {
 		return attributes
 	}
 	
-	private getInstances(dataset){
+	private getTrainingInstances(dataset, maxInstances = 0){
+		maxInstances = maxInstances ?: Disease.count()
+		
 		def instances = []
-		Disease.getAll().each{ disease ->
+//		Disease.getAll().each{ disease ->
+
+		Disease.executeQuery('from Disease order by rand()', [max: maxInstances]).each{ disease -> // Get random number of rows
 			def values = new double[dataset.numAttributes()]
 			def symptoms = disease.symptoms()
 			
 			values[0] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
 			def i = 1
-			Symptom.getAll().each{ symptom ->
+			Symptom.getAll().each{ symptom -> 
 				if(symptom in symptoms){
 					values[i] = dataset.attribute("s${symptom.id}").indexOfValue("y")
 				} else {
@@ -102,6 +141,28 @@ class WekaService {
 		}
 		
 		return instances
+	}
+	
+	private getPredictionDataset(symptoms){
+		def data = getHeader()
+		def dataset =  new Instances("DISEASE PREDICTION", header, 0)
+		 
+		def values = new double[dataset.numAttributes()]
+		values[0] = Instance.missingValue()
+		def i = 1
+		Symptom.getAll().each{ symptom ->
+			if(symptom in symptoms){
+				values[i] = dataset.attribute("s${symptom.id}").indexOfValue("y")
+			} else {
+				values[i] = dataset.attribute("s${symptom.id}").indexOfValue("n")
+			}
+			
+			i++
+		}
+		
+		dataset.add(new Instance(1.0, values))
+		
+		return dataset
 	}
 	
 	private getModel(data){

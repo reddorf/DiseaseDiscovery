@@ -3,6 +3,9 @@ package diseaseDiscovery.controllers.com
 import org.springframework.dao.DataIntegrityViolationException
 
 import diseaseDiscovery.domain.com.SymptomDisease;
+import diseaseDiscovery.domain.com.Symptom
+import diseaseDiscovery.domain.com.Disease
+import grails.converters.JSON
 
 class SymptomDiseaseController {
 
@@ -10,6 +13,7 @@ class SymptomDiseaseController {
 
 	def medicalInformationService
 	def wekaService
+	def postResponseService
 	
     def index() {
         redirect(action: "list", params: params)
@@ -110,6 +114,17 @@ class SymptomDiseaseController {
 	}
 	
 	def makePrediction(){
+		def symptIds = params.list('symptoms')
+		def symptoms = []
+		symptIds.each{
+			symptoms << Symptom.get(it)
+		}
+
+		def pred = wekaService.makePrediction(symptoms)
+		render postResponseService.getResponse(Disease.get(pred)) as JSON
+	}
+	
+	def createModel(){
 		render wekaService.createModel().toString()
 	}
 }

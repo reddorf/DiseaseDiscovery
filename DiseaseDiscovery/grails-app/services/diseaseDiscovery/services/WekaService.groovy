@@ -17,7 +17,7 @@ import weka.core.SerializationHelper
 
 class WekaService {
 	def MAX_INSTANCES = 50 // TODO: find useful number
-	def classifier
+	def NOISE = 10 // TODO: find % of noise to use
 	
 	def createModel(graph = false){
 		println "Creating WEKA model."
@@ -34,7 +34,6 @@ class WekaService {
 		
 		saveModel(model)
 
-		classifier = model
 		return model
 	}
 	
@@ -92,6 +91,7 @@ class WekaService {
 		dataset.randomize(dataset.getRandomNumberGenerator(99999))
 		
 		println "  >Data fetched."
+		println dataset
 		return dataset
 	}
 	
@@ -119,7 +119,6 @@ class WekaService {
 		maxInstances = maxInstances ?: Disease.count()
 		
 		def instances = []
-//		Disease.getAll().each{ disease ->
 
 		Disease.executeQuery('from Disease order by rand()', [max: maxInstances]).each{ disease -> // Get random number of rows
 			def values = new double[dataset.numAttributes()]
@@ -129,9 +128,9 @@ class WekaService {
 			def i = 1
 			Symptom.getAll().each{ symptom -> 
 				if(symptom in symptoms){
-					values[i] = dataset.attribute("s${symptom.id}").indexOfValue("y")
+					values[i] = new Random().nextInt(101) > NOISE ? dataset.attribute("s${symptom.id}").indexOfValue("y") : dataset.attribute("s${symptom.id}").indexOfValue("n")
 				} else {
-					values[i] = dataset.attribute("s${symptom.id}").indexOfValue("n")
+					values[i] = new Random().nextInt(101) > NOISE ? dataset.attribute("s${symptom.id}").indexOfValue("n") : dataset.attribute("s${symptom.id}").indexOfValue("y")
 				}
 				
 				i++

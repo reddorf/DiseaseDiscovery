@@ -7,7 +7,7 @@ import diseaseDiscovery.domain.com.SymptomDisease
 import weka.core.Instances
 import weka.core.Attribute
 import weka.core.FastVector
-import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.bayes.NaiveBayesUpdateable
 import weka.core.Instance
 import weka.core.Utils
 import weka.classifiers.Evaluation
@@ -16,8 +16,9 @@ import weka.gui.graphvisualizer.GraphVisualizer
 import weka.core.SerializationHelper
 
 class WekaService {
-	def MAX_INSTANCES = 50 // TODO: find useful number
+	def MAX_INSTANCES = 5 // TODO: find useful number
 	def NOISE = 10 // TODO: find % of noise to use
+//	def HEAP_SIZE = 2048
 	
 	def createModel(graph = false){
 		println "Creating WEKA model."
@@ -69,9 +70,9 @@ class WekaService {
 	
 	
 	private initializeWeka(){
-//		String[] options = Utils.splitOptions("-c 1")
+//		def options = Utils.splitOptions("-Xmx${HEAP_SIZE}m")
 		
-		def model = new NaiveBayes()
+		def model = new NaiveBayesUpdateable()
 //		model.setOptions(options)
 		
 		return model
@@ -91,7 +92,6 @@ class WekaService {
 		dataset.randomize(dataset.getRandomNumberGenerator(99999))
 		
 		println "  >Data fetched."
-		println dataset
 		return dataset
 	}
 	
@@ -112,18 +112,24 @@ class WekaService {
 			attributes.addElement(new Attribute("s${symptom.id}", symptomLabels))
 		}
 		
+		println "\t>Header built."
 		return attributes
 	}
 	
 	private getTrainingInstances(dataset, maxInstances = 0){
 		maxInstances = maxInstances ?: Disease.count()
+		def actualInstances =  maxInstances*0.90
+		def falseInstances = maxInstances*0.10
 		
 		def instances = []
 
-		Disease.executeQuery('from Disease order by rand()', [max: maxInstances]).each{ disease -> // Get random number of rows
+		def set = Disease.executeQuery('from Disease order by rand()', [max: actualInstances])
+		println "\t> Set of diseases fetched"
+		def j=1
+		set.each{ disease -> // Get random number of rows
 			def values = new double[dataset.numAttributes()]
 			def symptoms = disease.symptoms()
-			
+
 			values[0] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
 			def i = 1
 			Symptom.getAll().each{ symptom -> 
@@ -135,10 +141,14 @@ class WekaService {
 				
 				i++
 			}	
-			
+			j++
+			println "disease $disease done - $j of $actualInstances"
 			instances << new Instance(1.0, values)		
 		}
 		
+		// TODO: Add random instances
+		
+		println "\t>Dataset body created."
 		return instances
 	}
 	
@@ -179,10 +189,29 @@ class WekaService {
 		for(def i = 0; i < folds; i++){
 			def trainSet = randData.trainCV(folds, i)
 			def validationSet = randData.testCV(folds, i)
+			trainSet.setClassIndex(0)
+			validationSet.setClassIndex(0)
 			
 			model = initializeWeka()
-			model.buildClassifier(trainSet)
+//			model.buildClassifier(trainSet)
 			
+			
+			
+			def header = getHeader()
+			def dataset =  new Instances("DISEASES", header, 0)
+			dataset.setClassIndex(0)
+			model.buildClassifier(dataset)
+			println "sssssss"
+			def current
+			def currentInstance = 0
+			while ((current = trainSet.instance(currentInstance))){
+				model.updateClassifier(current)
+				currentInstance++
+				println currentInstance
+			}
+			println "aaa"
+			
+				
 			evaluator = new Evaluation(trainSet)
 			evaluator.evaluateModel(model, validationSet)
 			

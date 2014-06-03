@@ -16,7 +16,7 @@ import weka.gui.graphvisualizer.GraphVisualizer
 import weka.core.SerializationHelper
 import weka.core.converters.ConverterUtils.DataSink;
 class WekaService {
-	def DATASET_REPETITIONS = 50000 // TODO: find useful number
+	def DATASET_REPETITIONS = 2 // TODO: find useful number
 	def NOISE = 10 // TODO: find % of noise to use
 	def MAX_COINCIDENCE = 50 // maximum % of coincidence with an actual symptom list when generating other diseases
 //	def HEAP_SIZE = 2048

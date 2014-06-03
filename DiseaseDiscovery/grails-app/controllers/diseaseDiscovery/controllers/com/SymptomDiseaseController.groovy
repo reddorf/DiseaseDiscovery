@@ -14,6 +14,7 @@ class SymptomDiseaseController {
 	def medicalInformationService
 	def wekaService
 	def postResponseService
+	def weightService
 	
     def index() {
         redirect(action: "list", params: params)
@@ -111,6 +112,10 @@ class SymptomDiseaseController {
 	
 	def populateDB(){
 		medicalInformationService.populateDB()
+	}
+	
+	def getFiles() {
+		render weightService.getDefaultWeights() as JSON
 	}
 	
 	def makePrediction(){

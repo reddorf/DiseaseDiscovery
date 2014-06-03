@@ -1,5 +1,6 @@
-function setup(dataGetterLink, ajaxGetDiseaseURL){
+function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL){
 	setupAutocomplete(dataGetterLink);
+	setModelSliders(ajaxModelURL);
 	
 	$("#btn_addSymptom").click(function(){
 		if($("#symptom_name").val() && $("#symptom_id").val()){
@@ -45,6 +46,8 @@ function setup(dataGetterLink, ajaxGetDiseaseURL){
 			}
 		});
 	});
+	
+	$("#btn_defaultWeights").click(function(){setModelSliders(ajaxModelURL)});
 }
 
 function setupAutocomplete(dataGetterLink) {
@@ -85,8 +88,77 @@ function addSymptomToList(name, id){
 }
 
 function deleteSymptomFromList(id){
-	$("#sympt." + id).remove()
+	$("#" + id).remove()
 	//checkElementNumber();
+}
+
+function setModelSliders(modelURL){
+	$.ajax({
+		type: "GET",
+		url: modelURL,
+		async: false,
+		dataType: "json",
+        success : function(response) {
+        	$("#sliders").html("");
+        	$.each(response, function(name, val) {
+        		$("#sliders").append(
+        				"<div class='row'>" +
+        				"<span>" + name + "</span><div style='vertical-align:middle;'><div class='slider col-md-10'>"+val+"</div><span class='value col-md-2'></span></div>" +
+        				"</div>"
+        				);
+        	});
+        }
+	});
+	
+	var availableTotal = 1;
+	var sliders = $("#sliders .slider");
+	sliders.each(function() {
+	    var init_value = parseFloat($(this).text());
+	    $(this).siblings('.value').text((init_value*100).toFixed(3));
+
+	    $(this).empty().slider({
+	        value: init_value,
+	        min: 0,
+	        max: availableTotal,
+	        range: "max",
+	        step: 0.0001,
+	        animate: 0,
+	        slide: function(event, ui) {
+	            
+	            // Update display to current value
+	            $(this).siblings('.value').text((ui.value*100).toFixed(3));
+
+	            // Get current total
+	            var total = 0;
+
+	            sliders.not(this).each(function() {
+	                total += $(this).slider("option", "value");
+	            });
+
+	            // Need to do this because apparently jQ UI
+	            // does not update value until this event completes
+	            total += ui.value;
+
+	            var delta = availableTotal - total;
+	            
+	            // Update each slider
+	            sliders.not(this).each(function() {
+	                var t = $(this),
+	                    value = t.slider("option", "value");
+
+	                var new_value = value + (delta/2) ;
+	                
+	                if (new_value < 0 || ui.value == 1) 
+	                    new_value = 0;
+	                if (new_value > 1) 
+	                    new_value = 1;
+
+	                t.siblings('.value').text((new_value*100).toFixed(3));
+	                t.slider('value', new_value);
+	            });
+	        }
+	    });
+	});
 }
 
 function checkElementNumber() {

@@ -14,11 +14,13 @@ import weka.classifiers.Evaluation
 import weka.core.SerializationHelper
 import weka.gui.graphvisualizer.GraphVisualizer
 import weka.core.SerializationHelper
-
+import weka.core.converters.ConverterUtils.DataSink;
 class WekaService {
-	def MAX_INSTANCES = 5 // TODO: find useful number
+	def DATASET_REPETITIONS = 50000 // TODO: find useful number
 	def NOISE = 10 // TODO: find % of noise to use
+	def MAX_COINCIDENCE = 50 // maximum % of coincidence with an actual symptom list when generating other diseases
 //	def HEAP_SIZE = 2048
+	def random = new Random()
 	
 	def createModel(graph = false){
 		println "Creating WEKA model."
@@ -29,11 +31,11 @@ class WekaService {
 		}
 		
 		def data = defineTrainingDataset()
-		def model = getModel(data)
+		def model// = getModel(data)
 		
 		println "WEKA model created"
-		
-		saveModel(model)
+		DataSink.write("test_4.arff", data);
+		//saveModel(model)
 
 		return model
 	}
@@ -81,10 +83,10 @@ class WekaService {
 	private defineTrainingDataset(){
 		println "  >Fetching data..."
 		
-		def header = getHeader()
+		def header = getHeader(1)
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getTrainingInstances(dataset, MAX_INSTANCES).each{
+		getInstances(dataset, 1, MAX_COINCIDENCE, 0).each{
 			dataset.add(it)
 		}
 		
@@ -95,7 +97,27 @@ class WekaService {
 		return dataset
 	}
 	
-	private getHeader(){
+	
+	private defineTestingDataset() {
+		println "  >Fetching data..."
+		
+		def header = getHeader(DATASET_REPETITIONS)
+		def dataset =  new Instances("DISEASES", header, 0)
+		
+		getInstances(dataset, 5, MAX_COINCIDENCE, NOISE).each{
+			dataset.add(it)
+		}
+		
+		dataset.setClassIndex(0)
+		dataset.randomize(dataset.getRandomNumberGenerator(99999))
+		
+		println "  >Data fetched."
+		return dataset
+	}
+	
+	private getHeader(dataReps = 0){
+		dataReps = dataReps ?: 1
+		def patientNum = Disease.count() * dataReps
 		def attributes = new FastVector()
 		
 		def diseaseLabels = new FastVector()
@@ -106,6 +128,13 @@ class WekaService {
 		Disease.getAll().each{ disease ->
 			diseaseLabels.addElement(disease.id as String)
 		}
+		
+		// Random diseases
+		def lastDisease = Disease.count() + 1 
+		(lastDisease..(lastDisease + (patientNum * 0.10) - 1)).each{
+			diseaseLabels.addElement((it as int) as String)
+		}
+		
 		attributes.addElement(new Attribute("disease_id", diseaseLabels))
 		
 		Symptom.getAll().each{ symptom ->
@@ -116,41 +145,91 @@ class WekaService {
 		return attributes
 	}
 	
-	private getTrainingInstances(dataset, maxInstances = 0){
-		maxInstances = maxInstances ?: Disease.count()
-		def actualInstances =  maxInstances*0.90
-		def falseInstances = maxInstances*0.10
+	private getInstances(dataset, dataReps = 0, maxCoincidence = 0, noiseLevel){
+		dataReps = dataReps ?: 1
+		def actualInstances = dataReps * Disease.count()
+		def falseInstances = actualInstances*0.10 as int
+		
+		def symptomsList = Symptom.getAll()
 		
 		def instances = []
-
+		def j=1
 		def set = Disease.executeQuery('from Disease order by rand()', [max: actualInstances])
 		println "\t> Set of diseases fetched"
-		def j=1
-		set.each{ disease -> // Get random number of rows
-			def values = new double[dataset.numAttributes()]
-			def symptoms = disease.symptoms()
-
-			values[0] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
-			def i = 1
-			Symptom.getAll().each{ symptom -> 
-				if(symptom in symptoms){
-					values[i] = new Random().nextInt(101) > NOISE ? dataset.attribute("s${symptom.id}").indexOfValue("y") : dataset.attribute("s${symptom.id}").indexOfValue("n")
-				} else {
-					values[i] = new Random().nextInt(101) > NOISE ? dataset.attribute("s${symptom.id}").indexOfValue("n") : dataset.attribute("s${symptom.id}").indexOfValue("y")
-				}
+		dataReps.each{ 
+			set.each{ disease -> 
+				def values = new double[dataset.numAttributes()]
+				def symptoms = disease.symptoms()
+	
+				values[0] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
+				def i = 1
+				symptomsList.each{ symptom -> 
+					if(symptom in symptoms){
+						values[i] = new Random().nextInt(101) > noiseLevel ? dataset.attribute("s${symptom.id}").indexOfValue("y") : dataset.attribute("s${symptom.id}").indexOfValue("n")
+					} else {
+						values[i] = new Random().nextInt(101) > noiseLevel ? dataset.attribute("s${symptom.id}").indexOfValue("n") : dataset.attribute("s${symptom.id}").indexOfValue("y")
+					}
+					
+					i++
+				}	
+				//println "disease $disease done - $j of ${actualInstances}"
+				j++
 				
-				i++
-			}	
-			j++
-			println "disease $disease done - $j of $actualInstances"
-			instances << new Instance(1.0, values)		
+				instances << new Instance(1.0, values)		
+			}
 		}
 		
-		// TODO: Add random instances
+		println "Creating random instances"
+		def lastDisease = (Disease.count() + 1) as int
+		(1..falseInstances).each{
+			def goodSet = false
+			def instance
+			
+			def values = new double[dataset.numAttributes()]
+			while(!goodSet) {
+				values[0] = dataset.attribute("disease_id").indexOfValue(lastDisease as String)
+				def i = 1
+				symptomsList.each{
+					values[i] = new Random().nextBoolean() ? dataset.attribute("s${it.id}").indexOfValue("y") : dataset.attribute("s${it.id}").indexOfValue("n")
+					i++
+				}
+				if(!similar(instances, values, maxCoincidence)) {
+					goodSet = true
+				} else {
+					values = new double[dataset.numAttributes()]
+				}
+			}	
+			
+			//println "random disease $lastDisease done - $it of ${falseInstances}"
+			
+			instances << new Instance(1.0, values)
+			lastDisease++	
+		}
 		
 		println "\t>Dataset body created."
 		return instances
 	}
+	
+	private similar(instances, values, maxCoincidence){
+		def checkArray
+		def i
+		def equalsCount
+
+		return !instances.find{ instance ->
+			i = 0
+			equalsCount = 0
+//			println instance
+			instance.toDoubleArray().each {
+//				println "--- Checking: found $it, having ${values[i]} - ${it == values[i]}"
+				equalsCount += it == values[i] ? 1 : 0
+				i++
+			}	
+			
+			if (equalsCount / instance.numAttributes() * 100 < maxCoincidence){ /*println "Similar ($equalsCount - ${equalsCount / instance.numAttributes() * 100}) instance: $instance"; */return true}
+			else {/*println "Similar ($equalsCount - ${equalsCount / instance.numAttributes() * 100})"; */return false}
+		}
+	}
+	
 	
 	private getPredictionDataset(symptoms){
 		def data = getHeader()
@@ -201,7 +280,7 @@ class WekaService {
 			def dataset =  new Instances("DISEASES", header, 0)
 			dataset.setClassIndex(0)
 			model.buildClassifier(dataset)
-			println "sssssss"
+			//println "sssssss"
 			def current
 			def currentInstance = 0
 			while ((current = trainSet.instance(currentInstance))){
@@ -209,7 +288,7 @@ class WekaService {
 				currentInstance++
 				println currentInstance
 			}
-			println "aaa"
+			//println "aaa"
 			
 				
 			evaluator = new Evaluation(trainSet)

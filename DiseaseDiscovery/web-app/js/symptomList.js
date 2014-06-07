@@ -164,3 +164,11 @@ function setModelSliders(modelURL){
 function checkElementNumber() {
 	
 }
+
+function removeDisabledLinks(){
+	$("li[class=disabled]").each(function(i, el){
+		$(el).find('a').removeAttr('data-toggle')/*.click(function (e) {
+			  e.preventDefault();
+		})*/;
+	});
+}

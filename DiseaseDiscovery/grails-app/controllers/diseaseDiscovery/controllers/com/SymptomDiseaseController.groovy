@@ -118,6 +118,18 @@ class SymptomDiseaseController {
 		render weightService.getDefaultWeights() as JSON
 	}
 	
+	def getDiseasesByLetter(){
+		def dis = Disease.findAllByNameIlike("${params.letter}%")
+		
+		render (template: 'infotable', model: [instanceList: dis, instanceTotal: dis.size(), addButton: false]) 
+	}
+	
+	def getSymptomsByLetter(){
+		def sympt = Symptom.findAllByNameIlike("${params.letter}%")
+		
+		render (template: 'infotable', model: [instanceList: sympt, instanceTotal: sympt.size(), addButton: true]) 
+	}
+	
 	def makePrediction(){
 		def symptIds = params.list('symptoms')
 		def symptoms = []

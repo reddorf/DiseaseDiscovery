@@ -15,7 +15,7 @@ class MainController {
 				symptomLetters << it
 				
 		}
-		println symptomLetters
+		
 		[diseaseLetters: diseaseLetters, symptomLetters: symptomLetters]
 	}
 }

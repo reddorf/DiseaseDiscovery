@@ -306,7 +306,7 @@ class WekaService {
 	}
 	
 	private saveModel(model){
-		SerializationHelper.write("bayes.model", model)
+		SerializationHelper.write("classifiers/bayes.model", model)
 	}
 	
 	private goodToGo(){

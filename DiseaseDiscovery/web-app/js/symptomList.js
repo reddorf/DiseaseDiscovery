@@ -1,4 +1,4 @@
-function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL){
+function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, symptomsURL){
 	setupAutocomplete(dataGetterLink);
 	setModelSliders(ajaxModelURL);
 	
@@ -15,16 +15,6 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL){
 			sympts.push($(this).attr('id'));
 		});
 
-//		$.ajax({
-//			type: "POST",
-//			url: ajaxGetDiseaseURL,
-//			data: {'symptoms' : sympts},
-//			traditional: true,
-//			//dataType: "json",
-//			success : function(response){
-//				alert(response.disease);
-//			}
-//		});
 		$.when(
 				$.ajax({
 				type: "POST",
@@ -39,13 +29,34 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL){
 		).then(function(response){
 			if(response.success){
 				$("#disease").html(response.object.name);
-//				alert(response.object.name);
 			}
 			else {
 				alert("An error occurred");
 			}
 		});
 	});
+	
+	$('#letter-tabs a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+		var target = $(e.target).attr("href") // activated tab
+		/*alert("holaa");
+		alert($(target).html());*/
+
+		$.ajax({
+	        type: "GET",
+	        url: target.charAt(1) == 'd' ? diseasesURL : symptomsURL,
+	        data: {letter: target.substring(3)},
+	        dataType: "html",
+	        async: false,
+	        success : function(response) {
+	        	alert(response);
+	        	$(target).html(response);
+	        },
+	        error: function(resp){
+	        	console.log("Error getting tab content");
+	        }
+		});
+	});
+	
 	
 	$("#btn_defaultWeights").click(function(){setModelSliders(ajaxModelURL)});
 }

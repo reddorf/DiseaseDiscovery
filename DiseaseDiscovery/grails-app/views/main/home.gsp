@@ -9,7 +9,9 @@
 			setup(
 					"${createLink(controller: 'Symptom', action: 'getSymptoms')}",
 				  	"${createLink(controller: 'SymptomDisease', action: 'makePrediction')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getFiles')}"
+				  	"${createLink(controller: 'SymptomDisease', action: 'getFiles')}",
+				  	"${createLink(controller: 'SymptomDisease', action: 'getDiseasesByLetter')}",
+				  	"${createLink(controller: 'SymptomDisease', action: 'getSymptomsByLetter')}"
 				  );
 			removeDisabledLinks();
 		});
@@ -18,7 +20,7 @@
 <body>
 
 	<div class="tabs">
-		<ul class="nav nav-tabs">
+		<ul id="main-tabs" class="nav nav-tabs">
 			<li class="active"><a href="#main-tab" data-toggle="tab">Main</a></li>
 			<li style="float: right"><a href="#sympt-tab" data-toggle="tab">Symptom List</a></li>
 			<li style="float: right"><a href="#disease-tab" data-toggle="tab">Disease List</a></li>
@@ -76,33 +78,29 @@
 				</div>
 			</div>
 			<div class="tab-pane" id="sympt-tab">
-				<ul class="nav nav-pills nav-stacked">
+				<ul id="letter-tabs" class="nav nav-pills nav-stacked">
 					<g:each in="${'A'..'Z'}">
-  						<li class="${it in symptomLetters ? it == symptomLetters[0] ? 'active':'':'disabled'}"><a href="#sympt_${it}" data-toggle="tab">${it}</a></li>
+  						<li class="${it in symptomLetters ? it == symptomLetters[0] ? 'active':'':'disabled'}"><a href="#s_${it}" data-toggle="tab">${it}</a></li>
   					</g:each>
 				</ul>
 				<div class="tab-content">
 					<g:each in="${'A'..'Z'}">
 						<g:if test="${it in symptomLetters}">
-							<div class="tab-pane fade ${it == symptomLetters[0] ? 'in active':''}" id="sympt_${it}">
-								AQUI HI HA ${it}
-							</div>
+							<div class="padded tab-pane fade ${it == symptomLetters[0] ? 'in active':''}" id="s_${it}"><br/></div>
 						</g:if>
 					</g:each>
 				</div>
 			</div>
 			<div class="tab-pane" id="disease-tab">
-				<ul class="nav nav-pills nav-stacked">
+				<ul id="letter-tabs" class="nav nav-pills nav-stacked">
 					<g:each in="${'A'..'Z'}">
-  						<li class="${it in diseaseLetters ? it == diseaseLetters[0] ? 'active':'':'disabled'}"><a href="#dis_${it}" data-toggle="tab">${it}</a></li>
+  						<li class="${it in diseaseLetters ? it == diseaseLetters[0] ? 'active':'':'disabled'}"><a href="#d_${it}" data-toggle="tab">${it}</a></li>
   					</g:each>
 				</ul>
 				<div class="tab-content">
 					<g:each in="${'A'..'Z'}">
 						<g:if test="${it in diseaseLetters}">
-							<div class="tab-pane fade ${it == symptomLetters[0] ? 'in active':''}" id="dis_${it}">
-								AQUI HI HA ${it}
-							</div>
+							<div class="padded tab-pane fade ${it == symptomLetters[0] ? 'in active':''}" id="d_${it}"><br/></div>
 						</g:if>
 					</g:each>
 				</div>

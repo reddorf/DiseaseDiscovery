@@ -9,24 +9,31 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	});
 	
 	$("#btn_submitSymptoms").click(function(){
-		// TODO: SUBMIT
-		sympts = [];
+		// TODO: ADD SPINNER
+		var sympts = [];
+		var weights = [];
+		
 		$("#elements").children().each(function() {
 			sympts.push($(this).attr('id'));
 		});
-
+		
+		$('[id^="name_"]').each(function(){
+			weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
+		});
+		
 		$.when(
 				$.ajax({
 				type: "POST",
 				url: ajaxGetDiseaseURL,
-				data: {'symptoms' : sympts},
+				data: {'symptoms' : sympts, 'weights': weights},
 				traditional: true,
-				//dataType: "json",
+				dataType: "json",
 				success : function(response){
 					//alert(response.disease);
 				}
 			})
 		).then(function(response){
+			// TODO: REMOVE SPINNER
 			if(response.success){
 				$("#disease").html(response.object.name);
 			}
@@ -86,15 +93,15 @@ function setupAutocomplete(dataGetterLink) {
 }
 
 function addSymptomToList(name, id){
-	$("#elements").append('<li id=\'' + id + '\'class="input-group">' +  // list-group-item
-								'<span class=\"form-control\">' + name + '</span>' +
-								'<hiddenfield value=\'' + id + '\'/>' +
-								'<span class=\"input-group-btn\">' +
-									'<button class=\"btn btn-default\" id=\"btn_deleteSymptom\" type=\"button\" + onclick=\"deleteSymptomFromList(' + id + ')\">' +
-									'Delete' +
-									'</button>' +
-								'</span>' +
-						  '</li>');
+	$("#elements").append('<li id=\'' + id + '\'class="input-group listed-symptom">' +  // list-group-item
+			  '<span class=\"form-control\">' + name + '</span>' +
+			  '<hiddenfield value=\'' + id + '\'/>' +
+		  	  '<span class=\"input-group-btn\">' +
+				  '<button class=\"btn btn-default\" id=\"btn_deleteSymptom\" type=\"button\" + onclick=\"deleteSymptomFromList(' + id + ')\">' +
+				  '<span class="glyphicon glyphicon-remove"></span>Delete' +
+				  '</button>' +
+			  '</span>' +
+	          '</li>');
 	$("#symptom_name").val("");
 }
 
@@ -114,9 +121,9 @@ function setModelSliders(modelURL){
         	$.each(response, function(name, val) {
         		$("#sliders").append(
         				"<div class='row'>" +
-        				"<span>" + name + "</span><div style='vertical-align:middle;'><div class='slider col-md-10'>"+val+"</div><span class='value col-md-2'></span></div>" +
+        				"<span id='name_"+name+"'>" + name + "</span><div style='vertical-align:middle;'><div class='slider col-md-10'>"+val+"</div><span id='val_"+name+"' class='value col-md-2'></span></div>" +
         				"</div>"
-        				);
+        		);
         	});
         }
 	});
@@ -182,4 +189,8 @@ function removeDisabledLinks(){
 			  e.preventDefault();
 		})*/;
 	});
+}
+
+function search(name){
+	window.open("http://search2.google.cit.nih.gov/search?q=" + name + "&btnG.x=0&btnG.y=0&client=NIHNEW_frontend&proxystylesheet=NIHNEW_frontend&output=xml_no_dtd&getfields=*&proxyreload=1&btnG.x=0&btnG.y=0&sort=date%3AD%3AL%3Ad1&oe=UTF-8&ie=UTF-8&ud=1&exclude_apps=1&site=NIH_Master");
 }

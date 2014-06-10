@@ -9,7 +9,13 @@
 	        				type="button">
 	        				Use in prediction
 	        			</button>
-					</g:if>				
+					</g:if>		
+					<g:if test="${searchButton}">
+						<button class="col-lg-2 btn btn-default" onclick="search('${instance.name}')"
+	        				type="button">
+	        				Search in NIH
+	        			</button>
+					</g:if>			
 				</td>
 			</tr>
 		</g:each>

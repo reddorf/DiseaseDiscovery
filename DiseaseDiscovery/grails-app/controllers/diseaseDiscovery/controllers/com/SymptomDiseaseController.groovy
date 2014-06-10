@@ -121,7 +121,7 @@ class SymptomDiseaseController {
 	def getDiseasesByLetter(){
 		def dis = Disease.findAllByNameIlike("${params.letter}%")
 		
-		render (template: 'infotable', model: [instanceList: dis, instanceTotal: dis.size(), addButton: false]) 
+		render (template: 'infotable', model: [instanceList: dis, instanceTotal: dis.size(), searchButton: true]) 
 	}
 	
 	def getSymptomsByLetter(){
@@ -131,14 +131,20 @@ class SymptomDiseaseController {
 	}
 	
 	def makePrediction(){
+		def weights = [:]
+		params.weights.each{
+			def split = it.split(',')
+			weights[split[0]] = split[1].toFloat()/100
+		}
+
 		def symptIds = params.list('symptoms')
 		def symptoms = []
 		symptIds.each{
 			symptoms << Symptom.get(it)
 		}
 
-		def pred = wekaService.makePrediction(symptoms)
-		render postResponseService.getResponse(Disease.get(pred)) as JSON
+		/*def pred = wekaService.makePrediction(symptoms)
+		render postResponseService.getResponse(Disease.get(pred)) as JSON*/
 	}
 	
 	def createModel(){

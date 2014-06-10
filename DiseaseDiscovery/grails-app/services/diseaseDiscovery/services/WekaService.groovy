@@ -17,32 +17,13 @@ import weka.core.SerializationHelper
 import weka.core.converters.ConverterUtils.DataSink;
 class WekaService {
 	def DATASET_REPETITIONS = 2 // TODO: find useful number
-	def NOISE = 10 // TODO: find % of noise to use
+	def NOISE = 10 // % of noise to use
 	def MAX_COINCIDENCE = 50 // maximum % of coincidence with an actual symptom list when generating other diseases
-//	def HEAP_SIZE = 2048
 	def random = new Random()
 	
-	def createModel(graph = false){
-		println "Creating WEKA model."
-		
-		if(!goodToGo()) {
-			println "Dataset not usable. Aborting."
-			return null
-		}
-		
-		def data = defineTrainingDataset()
-		def model// = getModel(data)
-		
-		println "WEKA model created"
-		DataSink.write("test_4.arff", data);
-		//saveModel(model)
-
-		return model
-	}
-	
-	def makePrediction(symptoms){
-		println "Making prediction..."
-		def model = SerializationHelper.read("bayes.model")
+	def makePrediction(symptoms, modelPath){
+		println "Making prediction using $modelPath..."
+		def model = SerializationHelper.read(modelPath)
 		if(!model) return false
 		println "\t>Model loaded"
 		def data = getPredictionDataset(symptoms)
@@ -50,13 +31,14 @@ class WekaService {
 		data.setClassIndex(0)
 		
 		println "\t>Data loaded"
-		println data.numInstances()
-		println data
+//		println data.numInstances()
+//		println data
+		
 		def prediction = new Instances(data)
 		def label = model.classifyInstance(data.instance(0))
 		prediction.instance(0).setClassValue(label)	
 		
-		println prediction.toString()
+		//println prediction.toString()
 		println "$label -> ${data.classAttribute().value((int) label)}"
 		println "Prediction finished."
 		
@@ -68,16 +50,6 @@ class WekaService {
 //		println "--"
 //		println Utils.arrayToString(dist)
 		
-	}
-	
-	
-	private initializeWeka(){
-//		def options = Utils.splitOptions("-Xmx${HEAP_SIZE}m")
-		
-		def model = new NaiveBayesUpdateable()
-//		model.setOptions(options)
-		
-		return model
 	}
 	
 	private defineTrainingDataset(){
@@ -96,7 +68,6 @@ class WekaService {
 		println "  >Data fetched."
 		return dataset
 	}
-	
 	
 	private defineTestingDataset() {
 		println "  >Fetching data..."
@@ -218,18 +189,18 @@ class WekaService {
 		return !instances.find{ instance ->
 			i = 0
 			equalsCount = 0
-//			println instance
+
 			instance.toDoubleArray().each {
-//				println "--- Checking: found $it, having ${values[i]} - ${it == values[i]}"
 				equalsCount += it == values[i] ? 1 : 0
 				i++
 			}	
 			
-			if (equalsCount / instance.numAttributes() * 100 < maxCoincidence){ /*println "Similar ($equalsCount - ${equalsCount / instance.numAttributes() * 100}) instance: $instance"; */return true}
-			else {/*println "Similar ($equalsCount - ${equalsCount / instance.numAttributes() * 100})"; */return false}
+			if (equalsCount / instance.numAttributes() * 100 < maxCoincidence)
+				return true
+			else 
+				return false
 		}
 	}
-	
 	
 	private getPredictionDataset(symptoms){
 		def data = getHeader()
@@ -251,62 +222,6 @@ class WekaService {
 		dataset.add(new Instance(1.0, values))
 		
 		return dataset
-	}
-	
-	private getModel(data){
-		println "  >Building model..."
-		
-		def folds = data.numInstances() < 10 ? data.numInstances() : 10
-		
-		def bestModel
-		def bestEvaluation
-		def model
-		def evaluator
-		def randData = new Instances(data)
-		randData.randomize(data.getRandomNumberGenerator(99999))	
-		
-		for(def i = 0; i < folds; i++){
-			def trainSet = randData.trainCV(folds, i)
-			def validationSet = randData.testCV(folds, i)
-			trainSet.setClassIndex(0)
-			validationSet.setClassIndex(0)
-			
-			model = initializeWeka()
-//			model.buildClassifier(trainSet)
-			
-			
-			
-			def header = getHeader()
-			def dataset =  new Instances("DISEASES", header, 0)
-			dataset.setClassIndex(0)
-			model.buildClassifier(dataset)
-			//println "sssssss"
-			def current
-			def currentInstance = 0
-			while ((current = trainSet.instance(currentInstance))){
-				model.updateClassifier(current)
-				currentInstance++
-				println currentInstance
-			}
-			//println "aaa"
-			
-				
-			evaluator = new Evaluation(trainSet)
-			evaluator.evaluateModel(model, validationSet)
-			
-			if(bestEvaluation?.avgCost() > evaluator.avgCost() || (!bestEvaluation && !bestModel)){
-				bestModel = model
-				bestEvaluation = evaluator
-			}
-		}
-
-		println "  >Model built."
-//		println bestModel.toString()
-		return bestModel
-	}
-	
-	private saveModel(model){
-		SerializationHelper.write("classifiers/bayes.model", model)
 	}
 	
 	private goodToGo(){

@@ -7,7 +7,7 @@
 					<g:if test="${addButton}">
 						<button class="col-lg-2 btn btn-default" onclick="addSymptomToList('${instance.name}', ${instance.id})"
 	        				type="button">
-	        				Add symptom
+	        				Use in prediction
 	        			</button>
 					</g:if>				
 				</td>

@@ -48,7 +48,7 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	        dataType: "html",
 	        async: false,
 	        success : function(response) {
-	        	alert(response);
+	        	//alert(response);
 	        	$(target).html(response);
 	        },
 	        error: function(resp){

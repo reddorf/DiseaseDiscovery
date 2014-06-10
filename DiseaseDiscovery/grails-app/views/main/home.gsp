@@ -21,7 +21,7 @@
 
 	<div class="tabs">
 		<ul id="main-tabs" class="nav nav-tabs">
-			<li class="active"><a href="#main-tab" data-toggle="tab">Main</a></li>
+			<li class="active"><a href="#main-tab" data-toggle="tab">Prediction</a></li>
 			<li style="float: right"><a href="#sympt-tab" data-toggle="tab">Symptom List</a></li>
 			<li style="float: right"><a href="#disease-tab" data-toggle="tab">Disease List</a></li>
 		</ul>

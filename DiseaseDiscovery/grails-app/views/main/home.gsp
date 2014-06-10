@@ -55,7 +55,7 @@
 			    		<div class="row">
 			    			<div class="col-md-9">
 								<h4 class="panel-title">
-							        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+							        <a data-toggle="collapse" data-parent="#accordion" href="#advanced_menu">
 							          Advanced
 							        </a>
 								</h4>
@@ -67,7 +67,7 @@
 					       	</div>
 						</div>
 			    	</div>
-			    	<div id="collapseOne" class="panel-collapse collapse ">
+			    	<div id="advanced_menu" class="panel-collapse collapse ">
 						<div id="modelList" class="panel-body">
 							<ul id="sliders"></ul>
 							<button class="btn btn-default" id="btn_defaultWeights"	type="button">
@@ -112,12 +112,16 @@
 		<div class="panel-heading">
 			<div class="row">
 				<div class="col-md-4">
-	 		 		<h3 class="panel-title">Predicted Disease</h3>
+	 		 		<h3 id="prediction_title" class="panel-title">
+	 		 			Predicted Disease
+	 		 		</h3>
 	 		 	</div>
 	 		 	<h4 class="col-md-offset-4 col-md-4">
 	 		 		<div id="disease"></div>
 	 		 	</h4>
 	 		</div>
+		</div>
+		<div id="prediction_dropdown" class="panel-collapse collapse padded">
 		</div>
 	</div>
 </body>

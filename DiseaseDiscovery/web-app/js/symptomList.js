@@ -27,19 +27,23 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 				url: ajaxGetDiseaseURL,
 				data: {'symptoms' : sympts, 'weights': weights},
 				traditional: true,
-				dataType: "json",
+				dataType: "html",
 				success : function(response){
 					//alert(response.disease);
 				}
 			})
 		).then(function(response){
 			// TODO: REMOVE SPINNER
-			if(response.success){
-				$("#disease").html(response.object.name);
-			}
-			else {
-				alert("An error occurred");
-			}
+			//if(response.success){
+				//$("#disease").html(response.object.name);
+				$("#prediction_dropdown").html(response);
+				$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown">Predicted Disease</a>');
+				$("#disease").html($("#predicted_disease").prop("value"));
+				
+//			}
+//			else {
+//				alert("An error occurred");
+//			}
 		});
 	});
 	

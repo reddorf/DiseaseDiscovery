@@ -12,9 +12,10 @@ class SymptomDiseaseController {
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	def medicalInformationService
-	def wekaService
+//	def wekaService
 	def postResponseService
 	def weightService
+	def predictionService
 	
     def index() {
         redirect(action: "list", params: params)
@@ -134,7 +135,7 @@ class SymptomDiseaseController {
 		def weights = [:]
 		params.weights.each{
 			def split = it.split(',')
-			weights[split[0]] = split[1].toFloat()/100
+			weights[split[0]] = split[1].toFloat()///100
 		}
 
 		def symptIds = params.list('symptoms')
@@ -143,11 +144,24 @@ class SymptomDiseaseController {
 			symptoms << Symptom.get(it)
 		}
 
-		/*def pred = wekaService.makePrediction(symptoms)
-		render postResponseService.getResponse(Disease.get(pred)) as JSON*/
-	}
-	
-	def createModel(){
-		render wekaService.createModel().toString()
+		def preds = predictionService.makePrediction(symptoms, weights)
+		preds.all.each{ key, value ->
+			preds.all[key] = [Disease.get(value[0]), value[1]]
+		}
+//		def diseases = [:]
+//		preds.all.each{ key, value ->
+//			def dis = Disease.get(value[0].toLong()).name
+//			if (diseases[dis])
+//				diseases[dis] += value[1]
+//			else
+//				diseases[dis] = value[1]
+//		}
+//		
+		//render postResponseService.getResponse(Disease.get(preds.prediction)) as JSON
+		render (template: 'prediction', 
+				model: ['predictedDisease' : Disease.get(preds.prediction.key), 
+						'predictedWeight'  : preds.prediction.value,
+						'modelInfo' : preds.all
+						/*'diseases' : diseases, classified: predictions*/])
 	}
 }

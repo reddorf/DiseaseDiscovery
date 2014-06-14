@@ -107,6 +107,11 @@ function addSymptomToList(name, id){
 			  '</span>' +
 	          '</li>');
 	$("#symptom_name").val("");
+	
+	$("#alert").html('<div class="alert alert-info alert-dismissable">' +
+				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+				     '<strong>' + name + '</strong> Added to the list.' +
+				     '</div>');
 }
 
 function deleteSymptomFromList(id){

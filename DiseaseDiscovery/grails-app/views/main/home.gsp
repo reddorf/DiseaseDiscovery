@@ -19,6 +19,7 @@
 </head>
 <body>
 
+	<div id="alert"></div>
 	<div class="tabs">
 		<ul id="main-tabs" class="nav nav-tabs">
 			<li class="active"><a href="#main-tab" data-toggle="tab">Prediction</a></li>

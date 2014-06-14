@@ -14,42 +14,54 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	});
 	
 	$("#btn_submitSymptoms").click(function(){
-		// TODO: ADD SPINNER
-		var sympts = [];
-		var weights = [];
-		
-		$("#elements").children().each(function() {
-			sympts.push($(this).attr('id'));
-		});
-		
-		$('[id^="name_"]').each(function(){
-			weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
-		});
-		
-		$.when(
-				$.ajax({
-				type: "POST",
-				url: ajaxGetDiseaseURL,
-				data: {'symptoms' : sympts, 'weights': weights},
-				traditional: true,
-				dataType: "html",
-				success : function(response){
-					//alert(response.disease);
-				}
-			})
-		).then(function(response){
-			// TODO: REMOVE SPINNER
-			//if(response.success){
-				//$("#disease").html(response.object.name);
-				$("#prediction_dropdown").html(response);
-				$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown">Predicted Disease</a>');
-				$("#disease").html($("#predicted_disease").prop("value"));
-				
-//			}
-//			else {
-//				alert("An error occurred");
-//			}
-		});
+		if(!$("#sliders").html()){
+			$("#alert").html('<div class="alert alert-danger alert-dismissable">' +
+				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+				     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
+				     '</div>');
+		} else if(!$("#elements").children().length) {
+			$("#alert").html('<div class="alert alert-warning alert-dismissable">' +
+				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+				     '<strong> WARNING: </strong> The symptom list is empty.' +
+				     '</div>');
+		} else {
+			// TODO: ADD SPINNER
+			var sympts = [];
+			var weights = [];
+			
+			$("#elements").children().each(function() {
+				sympts.push($(this).attr('id'));
+			});
+			
+			$('[id^="name_"]').each(function(){
+				weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
+			});
+			
+			$.when(
+					$.ajax({
+					type: "POST",
+					url: ajaxGetDiseaseURL,
+					data: {'symptoms' : sympts, 'weights': weights},
+					traditional: true,
+					dataType: "html",
+					success : function(response){
+						//alert(response.disease);
+					}
+				})
+			).then(function(response){
+				// TODO: REMOVE SPINNER
+				//if(response.success){
+					//$("#disease").html(response.object.name);
+					$("#prediction_dropdown").html(response);
+					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown">Predicted Disease</a>');
+					$("#disease").html($("#predicted_disease").prop("value"));
+					
+	//			}
+	//			else {
+	//				alert("An error occurred");
+	//			}
+			});
+		}
 	});
 	
 	$('#letter-tabs a[data-toggle="tab"]').on('show.bs.tab', function (e) {
@@ -75,6 +87,13 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	
 	
 	$("#btn_defaultWeights").click(function(){setModelSliders(ajaxModelURL)});
+	
+	if(!$("#sliders").html()){
+		$("#alert").html('<div class="alert alert-danger alert-dismissable">' +
+			     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+			     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
+			     '</div>');
+	}
 }
 
 function setupAutocomplete(dataGetterLink) {

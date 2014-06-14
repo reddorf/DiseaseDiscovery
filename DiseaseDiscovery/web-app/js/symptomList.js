@@ -15,17 +15,18 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	
 	$("#btn_submitSymptoms").click(function(){
 		if(!$("#sliders").html()){
-			$("#alert").html('<div class="alert alert-danger alert-dismissable">' +
+			$("#alert").html('<div class="alert alert-danger alert-dismissable fade in">' +
 				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 				     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
 				     '</div>');
 		} else if(!$("#elements").children().length) {
-			$("#alert").html('<div class="alert alert-warning alert-dismissable">' +
+			$("#alert").html('<div class="alert alert-warning alert-dismissable fade in">' +
 				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 				     '<strong> WARNING: </strong> The symptom list is empty.' +
 				     '</div>');
 		} else {
 			// TODO: ADD SPINNER
+			$("#spinner").show();
 			var sympts = [];
 			var weights = [];
 			
@@ -89,7 +90,7 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	$("#btn_defaultWeights").click(function(){setModelSliders(ajaxModelURL)});
 	
 	if(!$("#sliders").html()){
-		$("#alert").html('<div class="alert alert-danger alert-dismissable">' +
+		$("#alert").html('<div class="alert alert-danger alert-dismissable fade in">' +
 			     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 			     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
 			     '</div>');
@@ -122,7 +123,6 @@ function setupAutocomplete(dataGetterLink) {
             	},
                 select: function (event, ui){
                     $('#symptom_id').val(ui.item.id);
-                    alert($("#autocomplete_match").val())
                 }
             });
         }
@@ -131,7 +131,7 @@ function setupAutocomplete(dataGetterLink) {
 
 function addSymptomToList(name, id){
 	if($("#elements").find("#" + id).length) {
-		$("#alert").html('<div class="alert alert-warning alert-dismissable">' +
+		$("#alert").html('<div class="alert alert-warning alert-dismissable fade in">' +
 			     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 			     '<strong>' + name + '</strong> is already in the list.' +
 			     '</div>');
@@ -147,7 +147,7 @@ function addSymptomToList(name, id){
 		          '</li>');
 		$("#symptom_name").val("");
 		
-		$("#alert").html('<div class="alert alert-success alert-dismissable">' +
+		$("#alert").html('<div class="alert alert-success alert-dismissable fade in">' +
 					     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 					     '<strong>' + name + '</strong>  added to the list.' +
 					     '</div>');

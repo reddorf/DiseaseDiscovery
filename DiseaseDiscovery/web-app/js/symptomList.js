@@ -2,6 +2,11 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	setupAutocomplete(dataGetterLink);
 	setModelSliders(ajaxModelURL);
 	
+	$("#autocomplete_match").change(function(){
+		setupAutocomplete(dataGetterLink);
+		alert("change!");
+	});
+	
 	$("#btn_addSymptom").click(function(){
 		if($("#symptom_name").val() && $("#symptom_id").val()){
 			addSymptomToList($("#symptom_name").val(), $("#symptom_id").val());
@@ -87,9 +92,18 @@ function setupAutocomplete(dataGetterLink) {
                 });
  
             $("#symptom_name").autocomplete({
-                source: data,
+                //source: data,
+            	source: $("#autocomplete_match").val() == 'contains' ? data :
+            			function(req, response) {
+		                    var re = $.ui.autocomplete.escapeRegex(req.term);
+		                    var matcher = new RegExp("^" + re, "i");
+		                    response($.grep(data, function(item) {
+		                        return matcher.test(item.value);
+		                    }));
+            	},
                 select: function (event, ui){
                     $('#symptom_id').val(ui.item.id);
+                    alert($("#autocomplete_match").val())
                 }
             });
         }

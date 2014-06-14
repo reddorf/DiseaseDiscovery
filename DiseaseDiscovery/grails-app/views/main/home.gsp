@@ -32,7 +32,11 @@
 					<div class="panel-heading">
 			 		 	
 			 		 	<div class="row">
-			 		 		<h3 class="panel-title col-lg-6">Symptoms List</h3>
+			 		 		<h3 class="panel-title col-lg-4">Symptoms List</h3>
+			 		 		<select id="autocomplete_match" class="autocomplete-option col-lg-2">
+			 		 			<option value="contains">containing</option>
+			 		 			<option value="begins_by">beginning by</option>
+			 		 		</select>
 							<div class="col-lg-6">
 						    	<div class="input-group">
 						 		 	<input type="text" class="form-control" name="symptom" id="symptom_name" 

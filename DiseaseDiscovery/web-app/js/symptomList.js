@@ -97,21 +97,28 @@ function setupAutocomplete(dataGetterLink) {
 }
 
 function addSymptomToList(name, id){
-	$("#elements").append('<li id=\'' + id + '\'class="input-group listed-symptom">' +  // list-group-item
-			  '<span class=\"form-control\">' + name + '</span>' +
-			  '<hiddenfield value=\'' + id + '\'/>' +
-		  	  '<span class=\"input-group-btn\">' +
-				  '<button class=\"btn btn-default\" id=\"btn_deleteSymptom\" type=\"button\" + onclick=\"deleteSymptomFromList(' + id + ')\">' +
-				  '<span class="glyphicon glyphicon-remove"></span>Delete' +
-				  '</button>' +
-			  '</span>' +
-	          '</li>');
-	$("#symptom_name").val("");
-	
-	$("#alert").html('<div class="alert alert-info alert-dismissable">' +
-				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-				     '<strong>' + name + '</strong> Added to the list.' +
-				     '</div>');
+	if($("#elements").find("#" + id).length) {
+		$("#alert").html('<div class="alert alert-warning alert-dismissable">' +
+			     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+			     '<strong>' + name + '</strong> is already in the list.' +
+			     '</div>');
+	} else {
+		$("#elements").append('<li id=\'' + id + '\'class="input-group listed-symptom">' +  // list-group-item
+				  '<span class=\"form-control\">' + name + '</span>' +
+				  '<hiddenfield value=\'' + id + '\'/>' +
+			  	  '<span class=\"input-group-btn\">' +
+					  '<button class=\"btn btn-default\" id=\"btn_deleteSymptom\" type=\"button\" + onclick=\"deleteSymptomFromList(' + id + ')\">' +
+					  '<span class="glyphicon glyphicon-remove"></span>Delete' +
+					  '</button>' +
+				  '</span>' +
+		          '</li>');
+		$("#symptom_name").val("");
+		
+		$("#alert").html('<div class="alert alert-success alert-dismissable">' +
+					     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+					     '<strong>' + name + '</strong>  added to the list.' +
+					     '</div>');
+	}
 }
 
 function deleteSymptomFromList(id){

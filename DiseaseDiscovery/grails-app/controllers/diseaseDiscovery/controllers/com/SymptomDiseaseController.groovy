@@ -12,7 +12,7 @@ class SymptomDiseaseController {
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	def medicalInformationService
-//	def wekaService
+	def wekaService
 	def postResponseService
 	def weightService
 	def predictionService
@@ -128,14 +128,13 @@ class SymptomDiseaseController {
 	def getSymptomsByLetter(){
 		def sympt = Symptom.findAllByNameIlike("${params.letter}%")
 		
-		render (template: 'infotable', model: [instanceList: sympt, instanceTotal: sympt.size(), addButton: true]) 
+		render (template: 'infotable', model: [instanceList: sympt, instanceTotal: sympt.size(), addButton: true, searchButton: true]) 
 	}
 	
 	def makePrediction(){
 		def weights = [:]
-		params.weights.each{
-			def split = it.split(',')
-			weights[split[0]] = split[1].toFloat()///100
+		JSON.parse(params.weights).each{
+			weights[it.classifier] = it.weight.toFloat()///100
 		}
 
 		def symptIds = params.list('symptoms')
@@ -163,5 +162,28 @@ class SymptomDiseaseController {
 						'predictedWeight'  : preds.prediction.value,
 						'modelInfo' : preds.all
 						/*'diseases' : diseases, classified: predictions*/])
+	}
+	
+	def path(){
+		def folder = new File("..")
+		def list = []
+
+		folder.eachFile() { file->
+			list << file.getPath().replaceFirst(~/\.[^\.]+$/, '')
+		}
+		
+		render list
+	}
+	
+	def createTrainingSet() {
+		wekaService.makeTrainingSet()
+		
+		render "ieps"
+	}
+	
+	def createTestingSet() {
+		wekaService.makeTestingSet()
+		
+		render "done"
 	}
 }

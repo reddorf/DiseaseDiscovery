@@ -35,14 +35,18 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 			});
 			
 			$('[id^="name_"]').each(function(){
-				weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
+				//weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
+				weights.push({
+					'classifier' : this.innerHTML,
+					'weight' : $("#val_" + this.innerHTML).html()
+				});
 			});
 			
 			$.when(
 					$.ajax({
 					type: "POST",
 					url: ajaxGetDiseaseURL,
-					data: {'symptoms' : sympts, 'weights': weights},
+					data: {'symptoms' : sympts, 'weights': JSON.stringify(weights)},
 					traditional: true,
 					dataType: "html",
 					success : function(response){

@@ -3,3 +3,12 @@
 /integration
 /test
 /svm2.model
+/classifiers
+/classifiers_old
+/test_30coinc.arff
+/test_4.arff
+/test_malalt_ultimes_5rep.arff
+/test3.arff
+/train_malalt_ultimes_norep.arff
+/train_malalt_ultimes.arff
+/train.arff

@@ -1,9 +1,11 @@
-<table class="table table-striped table-bordered table-hover">
+<table class="table table-striped table-bordered table-hover" id="list">
 	<tbody>
 		<g:each in="${instanceList}" status="i" var="instance">
 			<tr>
 				<td>
-					<div class="col-lg-8">${instance.name}</div>
+					<div class="col-lg-8">
+						<a data-toggle="collapse" data-parent="#list" href="#collapse_${instance.id}" id="toggle_${instance.id}" href="#" onclick="getComponents(${instance.id}, '${instance.class}')">${instance.name}</a>
+					</div>
 					<g:if test="${addButton}">
 						<g:if test="${searchButton}">
 							<button class="col-lg-2 btn btn-default" onclick="search('${instance.name}')"
@@ -25,6 +27,9 @@
 		        			</button>
 						</g:if>		
 					</g:else>	
+					<div id="collapse_${instance.id}" class="panel-collapse collapse">
+				    	<div class="panel-body" id="body_${instance.id}">Loading...</div>
+				    </div>
 				</td>
 			</tr>
 		</g:each>

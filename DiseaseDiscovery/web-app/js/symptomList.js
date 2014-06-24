@@ -1,4 +1,8 @@
-function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, symptomsURL){
+var getComponentURL;
+
+function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, symptomsURL, getStuffURL){
+	getComponentURL = getStuffURL;
+	
 	setupAutocomplete(dataGetterLink);
 	setModelSliders(ajaxModelURL);
 	
@@ -71,8 +75,6 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	
 	$('#letter-tabs a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 		var target = $(e.target).attr("href") // activated tab
-		/*alert("holaa");
-		alert($(target).html());*/
 
 		$.ajax({
 	        type: "GET",
@@ -241,6 +243,22 @@ function removeDisabledLinks(){
 		$(el).find('a').removeAttr('data-toggle')/*.click(function (e) {
 			  e.preventDefault();
 		})*/;
+	});
+}
+
+function getComponents(id, type) {
+	//alert(id + " --- " + type);
+	$.ajax({
+		type: "GET",
+		url: getComponentURL,
+		async: false,
+		dataType: "html",
+		data: {'id' : id, 'type' : type},
+        success : function(response) {
+        	//alert(JSON.stringify(response, null, 4));
+        	$("#body_" + id).html(response);
+        	$("#toggle_" + id).prop('onclick', null);
+        }
 	});
 }
 

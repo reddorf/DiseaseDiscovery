@@ -11,7 +11,8 @@
 				  	"${createLink(controller: 'SymptomDisease', action: 'makePrediction')}",
 				  	"${createLink(controller: 'SymptomDisease', action: 'getFiles')}",
 				  	"${createLink(controller: 'SymptomDisease', action: 'getDiseasesByLetter')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getSymptomsByLetter')}"
+				  	"${createLink(controller: 'SymptomDisease', action: 'getSymptomsByLetter')}",
+				  	"${createLink(controller: 'SymptomDisease', action: 'getComponents')}"
 				  );
 			removeDisabledLinks();
 		});

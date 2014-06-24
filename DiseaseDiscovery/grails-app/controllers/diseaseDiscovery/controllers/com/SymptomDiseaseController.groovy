@@ -131,6 +131,22 @@ class SymptomDiseaseController {
 		render (template: 'infotable', model: [instanceList: sympt, instanceTotal: sympt.size(), addButton: true, searchButton: true]) 
 	}
 	
+	def getComponents(){
+		def ret
+		
+		if(params.type == Disease.class.toString()){
+			ret = Disease.get(params.id).symptoms()
+		}
+		else if (params.type == Symptom.class.toString()){
+			ret = Symptom.get(params.id).diseases()
+		}
+		
+		ret ? render(template: 'dropdown', model: [instanceList: ret, 
+												   sympts: params.type == Symptom.class.toString(),
+												   disease: Disease.findById(params.id),
+												   symptom: Symptom.findById(params.id)]) : render ("There are no instances under this element")
+	}
+	
 	def makePrediction(){
 		def weights = [:]
 		JSON.parse(params.weights).each{

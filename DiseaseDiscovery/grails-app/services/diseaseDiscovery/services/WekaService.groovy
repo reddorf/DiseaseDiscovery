@@ -16,7 +16,7 @@ import weka.gui.graphvisualizer.GraphVisualizer
 import weka.core.SerializationHelper
 import weka.core.converters.ConverterUtils.DataSink;
 class WekaService {
-	def DATASET_REPETITIONS = 5 // TODO: find useful number
+	def DATASET_REPETITIONS = 3 // TODO: find useful number
 	def NOISE = 10 // % of noise to use
 	def MAX_COINCIDENCE = 50 // maximum % of coincidence with an actual symptom list when generating other diseases
 	def random = new Random()
@@ -61,7 +61,7 @@ class WekaService {
 	def makeTestingSet(){
 		def data = defineTestingDataset()
 		
-		DataSink.write("test_malalt_ultimes_5rep.arff", data);
+		DataSink.write("test_malalt_ultimes_3rep.arff", data);
 	}
 	
 	
@@ -88,7 +88,7 @@ class WekaService {
 		def header = getHeader(DATASET_REPETITIONS)
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getInstances(dataset, 5, MAX_COINCIDENCE, NOISE).each{
+		getInstances(dataset,DATASET_REPETITIONS, MAX_COINCIDENCE, NOISE).each{
 			dataset.add(it)
 		}
 		

@@ -62,7 +62,7 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 				//if(response.success){
 					//$("#disease").html(response.object.name);
 					$("#prediction_dropdown").html(response);
-					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown">Predicted Disease</a>');
+					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown" style="color: #000000;">Predicted Disease</a>');
 					$("#disease").html($("#predicted_disease").prop("value"));
 					
 	//			}

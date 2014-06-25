@@ -4,7 +4,7 @@
 			<tr>
 				<td>
 					<div class="col-lg-8">
-						<a data-toggle="collapse" data-parent="#list" href="#collapse_${instance.id}" id="toggle_${instance.id}" href="#" onclick="getComponents(${instance.id}, '${instance.class}')">${instance.name}</a>
+						<a style="color:#000000;" data-toggle="collapse" data-parent="#list" href="#collapse_${instance.id}" id="toggle_${instance.id}" href="#" onclick="getComponents(${instance.id}, '${instance.class}')">${instance.name}</a>
 					</div>
 					<g:if test="${addButton}">
 						<g:if test="${searchButton}">

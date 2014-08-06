@@ -1,27 +1,34 @@
 package diseaseDiscovery.controllers.com
 
+import org.springframework.security.access.annotation.Secured
 import org.springframework.dao.DataIntegrityViolationException
 
 import diseaseDiscovery.domain.com.Symptom;
 import grails.converters.JSON
 
+
+@Secured(['ROLE_ADMIN'])
 class SymptomController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
+	@Secured(['ROLE_ADMIN'])
     def index() {
         redirect(action: "list", params: params)
     }
 
+	@Secured(['ROLE_ADMIN'])
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         [symptomInstanceList: Symptom.list(params), symptomInstanceTotal: Symptom.count()]
     }
 
+	@Secured(['ROLE_ADMIN'])
     def create() {
         [symptomInstance: new Symptom(params)]
     }
 
+	@Secured(['ROLE_ADMIN'])
     def save() {
         def symptomInstance = new Symptom(params)
         if (!symptomInstance.save(flush: true)) {
@@ -33,6 +40,7 @@ class SymptomController {
         redirect(action: "show", id: symptomInstance.id)
     }
 
+	@Secured(['ROLE_ADMIN'])
     def show(Long id) {
         def symptomInstance = Symptom.get(id)
         if (!symptomInstance) {
@@ -44,6 +52,7 @@ class SymptomController {
         [symptomInstance: symptomInstance]
     }
 
+	@Secured(['ROLE_ADMIN'])
     def edit(Long id) {
         def symptomInstance = Symptom.get(id)
         if (!symptomInstance) {
@@ -55,6 +64,7 @@ class SymptomController {
         [symptomInstance: symptomInstance]
     }
 
+	@Secured(['ROLE_ADMIN'])
     def update(Long id, Long version) {
         def symptomInstance = Symptom.get(id)
         if (!symptomInstance) {
@@ -84,6 +94,7 @@ class SymptomController {
         redirect(action: "show", id: symptomInstance.id)
     }
 
+	@Secured(['ROLE_ADMIN'])
     def delete(Long id) {
         def symptomInstance = Symptom.get(id)
         if (!symptomInstance) {

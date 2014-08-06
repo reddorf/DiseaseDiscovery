@@ -8,11 +8,11 @@
 		$(document).ready(function() {
 			setup(
 					"${createLink(controller: 'Symptom', action: 'getSymptoms')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'makePrediction')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getFiles')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getDiseasesByLetter')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getSymptomsByLetter')}",
-				  	"${createLink(controller: 'SymptomDisease', action: 'getComponents')}"
+				  	"${createLink(controller: 'Main', action: 'makePrediction')}",
+				  	"${createLink(controller: 'Main', action: 'getFiles')}",
+				  	"${createLink(controller: 'Main', action: 'getDiseasesByLetter')}",
+				  	"${createLink(controller: 'Main', action: 'getSymptomsByLetter')}",
+				  	"${createLink(controller: 'Main', action: 'getComponents')}"
 				  );
 			removeDisabledLinks();
 		});

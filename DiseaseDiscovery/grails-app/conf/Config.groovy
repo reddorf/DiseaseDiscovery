@@ -92,9 +92,9 @@ log4j = {
 
 
 // Added by the Spring Security Core plugin:
-grails.plugin.springsecurity.userLookup.userDomainClassName = 'auth.User'
-grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'auth.UserRole'
-grails.plugin.springsecurity.authority.className = 'auth.Role'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'diseaseDiscovery.domain.auth.User'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'diseaseDiscovery.domain.auth.UserRole'
+grails.plugin.springsecurity.authority.className = 'diseaseDiscovery.domain.auth.Role'
 grails.plugin.springsecurity.rejectIfNoRule = false
 grails.plugin.springsecurity.fii.rejectPublicInvocations = false
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [

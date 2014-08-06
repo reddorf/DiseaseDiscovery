@@ -1,9 +1,11 @@
 package diseaseDiscovery.controllers.com
 
+import org.springframework.security.access.annotation.Secured
 import org.springframework.dao.DataIntegrityViolationException
 
 import diseaseDiscovery.domain.com.Disease;
 
+@Secured(['ROLE_ADMIN'])
 class DiseaseController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]

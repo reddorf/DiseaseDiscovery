@@ -33,7 +33,12 @@ class WeightService {
 			}
 		}
 		
-		println weightedList
+		if(total == 0.0f){
+			fileNames.each{
+				weightedList[it] = 1/totalNames
+			}	
+		}
+		
 		return weightedList
     }
 	

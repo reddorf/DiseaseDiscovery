@@ -140,4 +140,26 @@ class MainController {
 		
 		render (["size: " : set.size, "total" : Disease.count, "count" : set.size / Disease.count * 100])
 	}
+	
+	@Secured(['ROLE_ADMIN'])
+	def deleteEmpty(){
+		def num = Disease.count
+		def set = []
+		
+		println "Getting diseases..."
+		
+		Disease.getAll().each{
+			if(!it.symptoms() )
+				set << it
+		}
+		
+		println "Deleting diseases..."
+		set.each{
+			it.delete(flush:true)
+		}
+		
+		println "Diseases deleted."
+		render "Deleted ${num-Disease.count} instances"
+	}
+	
 }

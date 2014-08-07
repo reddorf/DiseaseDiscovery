@@ -55,13 +55,15 @@ class WekaService {
 	def makeTrainingSet() {
 		def data = defineTrainingDataset()
 		
-		DataSink.write("train_malalt_ultimes_norep.arff", data);
+		DataSink.write("train_malalt_final_5rep_10noise_50maxcoinc.arff", data);
+		println "Training set saved."
 	}
 	
 	def makeTestingSet(){
 		def data = defineTestingDataset()
 		
-		DataSink.write("test_malalt_ultimes_3rep.arff", data);
+		DataSink.write("test_malalt_final_3rep_10noise_50maxcoinc.arff", data);
+		println "Training set saved."
 	}
 	
 	
@@ -71,7 +73,7 @@ class WekaService {
 		def header = getHeader(1)
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getInstances(dataset, 1, MAX_COINCIDENCE, 0).each{
+		getInstances(dataset,5, MAX_COINCIDENCE, NOISE).each{
 			dataset.add(it)
 		}
 		
@@ -88,7 +90,7 @@ class WekaService {
 		def header = getHeader(DATASET_REPETITIONS)
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getInstances(dataset,DATASET_REPETITIONS, MAX_COINCIDENCE, NOISE).each{
+		getInstances(dataset, 3, MAX_COINCIDENCE, NOISE).each{
 			dataset.add(it)
 		}
 		
@@ -110,11 +112,16 @@ class WekaService {
 		symptomLabels.addElement("n")
 		
 		Disease.getAll().each{ disease ->
-			diseaseLabels.addElement(disease.id as String)
+			if(disease.symptoms()) diseaseLabels.addElement(disease.id as String)
 		}
 		
 		// Random diseases
-		def lastDisease = Disease.count() + 1 
+		def lastDisease = 1 + (Disease.createCriteria().get{
+			projections {
+				max "id"
+			}
+		} as Long)
+		
 		(lastDisease..(lastDisease + (patientNum * 0.10) - 1)).each{
 			diseaseLabels.addElement((it as int) as String)
 		}
@@ -140,8 +147,15 @@ class WekaService {
 		
 		def instances = []
 		def j=1
-		def set = Disease.executeQuery('from Disease order by rand()', [max: actualInstances])
-		println "\t> Set of diseases fetched"
+		def set = []//Disease.executeQuery('from Disease order by rand()', [max: actualInstances])
+		Disease.getAll().each{
+			/*if(it.symptoms())
+				set << it
+			else
+				println "disease $it.name not used: has no symptoms"	*/set << it
+		}
+		
+		println "\t> Set of diseases fetched: using ${set.size()} of ${Disease.count()}"
 		(1..dataReps).each{ 
 			set.each{ disease -> 
 				def values = new double[dataset.numAttributes()]
@@ -158,7 +172,7 @@ class WekaService {
 					i++
 				}	
 				values[i] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
-				println "disease $disease.id done - $j of ${actualInstances}"
+				println "disease $disease.id done - $j of ${dataReps*set.size()}"
 				j++
 				
 				instances << new Instance(1.0, values)		
@@ -168,7 +182,11 @@ class WekaService {
 		println "Creating random instances"
 		(1..dataReps).each{ lap ->
 			println "set $lap of $dataReps"
-			def lastDisease = (Disease.count() + 1) as int
+			def lastDisease = 1 + (Disease.createCriteria().get{
+				projections {
+					max "id"
+				}
+			} as Long)
 			(1..falseInstances).each{ 
 				def goodSet = false
 				def instance

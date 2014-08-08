@@ -23,10 +23,15 @@ class AdministrationController {
 				new ClassifierWeight(classifier: it.classifier, weight: it.weight.toDouble()).save(flush: true)
 			}
 			
-			cList << clas
+			cList << clas.classifier
 		}
 		
-				
+		ClassifierWeight.all.each{
+			if(!it.classifier in cList){
+				it.delete(flush:true)
+			}
+		}
+		
 		render "ok"
 	}
 }

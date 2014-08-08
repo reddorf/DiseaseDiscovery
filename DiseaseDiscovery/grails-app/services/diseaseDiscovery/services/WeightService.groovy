@@ -4,6 +4,8 @@ import diseaseDiscovery.domain.com.ClassifierWeight
 
 class WeightService {
 
+	def grailsApplication
+	
     def getDefaultWeights() {
 		def weightedList = [:]
 		def fileNames = getFileNames()
@@ -43,7 +45,7 @@ class WeightService {
     }
 	
 	private getFileNames() {
-		def folder = new File("classifiers")
+		def folder = new File(grailsApplication.config["classifierPath"])//new File("classifiers")
 		def list = []
 
 		folder.eachFile() { file->

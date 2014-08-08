@@ -14,7 +14,9 @@ import weka.classifiers.Evaluation
 import weka.core.SerializationHelper
 import weka.gui.graphvisualizer.GraphVisualizer
 import weka.core.SerializationHelper
-import weka.core.converters.ConverterUtils.DataSink;
+import weka.core.converters.ConverterUtils.DataSink
+
+
 class WekaService {
 	def DATASET_REPETITIONS = 3 // TODO: find useful number
 	def NOISE = 10 // % of noise to use
@@ -39,17 +41,11 @@ class WekaService {
 		prediction.instance(0).setClassValue(label)	
 		
 		//println prediction.toString()
-		println "$label -> ${data.classAttribute().value((int) label)}"
+		//println "$label -> ${data.classAttribute().value((int) label)}"
 		println "Prediction finished."
 		
-		return data.classAttribute().value((int) label)
-		
-//		def pred = model.classifyInstance(data.instance(0));
-//		def dist = model.distributionForInstance(data.instance(0));
-//		println data.classAttribute().value((int) pred)
-//		println "--"
-//		println Utils.arrayToString(dist)
-		
+		//return data.classAttribute().value((int) label)	
+		return label	
 	}
 	
 	def makeTrainingSet() {

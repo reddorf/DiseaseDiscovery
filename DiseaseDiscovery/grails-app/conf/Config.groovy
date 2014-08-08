@@ -59,12 +59,19 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
+if (System.properties["os.name"].contains("Windows")) {
+	dirSeparator    = "\\"
+} else {
+	dirSeparator    = "/"
+}
 environments {
     development {
         grails.logging.jul.usebridge = true
+		classifierPath = "classifiers"
     }
     production {
         grails.logging.jul.usebridge = false
+		classifierPath = "${dirSeparator}home${dirSeparator}mpinol${dirSeparator}classifiers"
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }

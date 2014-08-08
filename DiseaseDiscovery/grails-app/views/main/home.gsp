@@ -121,6 +121,7 @@
 	 		 		<h3 id="prediction_title" class="panel-title">
 	 		 			Predicted Disease
 	 		 		</h3>
+	 		 		<img id="loading" style="display:none;" src="${resource(dir: 'images', file: 'ajax-loader.gif')}" alt="Loading..."/>
 	 		 	</div>
 	 		 	<h4 class="col-md-offset-4 col-md-4">
 	 		 		<div id="disease"></div>

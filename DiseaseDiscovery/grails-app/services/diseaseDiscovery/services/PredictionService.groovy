@@ -27,7 +27,6 @@ class PredictionService {
 //		println "all: $individualPredictions"
 //		println "max: ${predictions.max{it.value}.key} with weight ${predictions.max{it.value}.value}"
 		
-
 		return ['prediction' : predictions.max{it.value}, 'all' : individualPredictions]
     }
 }

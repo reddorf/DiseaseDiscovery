@@ -42,7 +42,7 @@ class WekaService {
 		
 		//println prediction.toString()
 		//println "$label -> ${data.classAttribute().value((int) label)}"
-		println "Prediction finished."
+		println "Prediction finished. $label"
 		
 		//return data.classAttribute().value((int) label)	
 		return label	

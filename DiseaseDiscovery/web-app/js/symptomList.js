@@ -31,6 +31,11 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 		} else {
 			// TODO: ADD SPINNER
 			$("#spinner").show();
+			$("#btn_submitSymptoms").prop('disabled', true);
+			$("#prediction_dropdown").html("");
+			$("#prediction_title").html('Predicted Disease');
+			$("#disease").html("");
+			
 			var sympts = [];
 			var weights = [];
 			
@@ -59,6 +64,7 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 				})
 			).then(function(response){
 				// TODO: REMOVE SPINNER
+				$("#btn_submitSymptoms").prop('disabled', false);
 				//if(response.success){
 					//$("#disease").html(response.object.name);
 					$("#prediction_dropdown").html(response);

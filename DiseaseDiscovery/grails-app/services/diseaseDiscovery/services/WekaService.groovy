@@ -44,21 +44,21 @@ class WekaService {
 		//println "$label -> ${data.classAttribute().value((int) label)}"
 		println "Prediction finished. $label"
 		
-		//return data.classAttribute().value((int) label)	
+		//return data.classAttribute().value((int) label)	//TODO: use this
 		return label	
 	}
 	
 	def makeTrainingSet() {
 		def data = defineTrainingDataset()
 		
-		DataSink.write("train_malalt_final_5rep_10noise_50maxcoinc.arff", data);
+		DataSink.write("train_new___5rep_10noise_50maxcoinc.arff", data);
 		println "Training set saved."
 	}
 	
 	def makeTestingSet(){
 		def data = defineTestingDataset()
 		
-		DataSink.write("test_malalt_final_3rep_10noise_50maxcoinc.arff", data);
+		DataSink.write("test_new___5rep_10noise_50maxcoinc.arff", data);
 		println "Training set saved."
 	}
 	
@@ -69,12 +69,12 @@ class WekaService {
 		def header = getHeader(1)
 		def dataset =  new Instances("DISEASES", header, 0)
 		
-		getInstances(dataset,5, MAX_COINCIDENCE, NOISE).each{
+		getInstances(dataset, 5, MAX_COINCIDENCE, NOISE).each{
 			dataset.add(it)
 		}
 		
 		//dataset.setClassIndex(0)
-		dataset.randomize(dataset.getRandomNumberGenerator(99999))
+		//dataset.randomize(dataset.getRandomNumberGenerator(99999))
 		
 		println "  >Data fetched."
 		return dataset
@@ -91,7 +91,7 @@ class WekaService {
 		}
 		
 		//dataset.setClassIndex(0)
-		dataset.randomize(dataset.getRandomNumberGenerator(99999))
+		//dataset.randomize(dataset.getRandomNumberGenerator(99999))
 		
 		println "  >Data fetched."
 		return dataset
@@ -102,7 +102,7 @@ class WekaService {
 		def patientNum = Disease.count() //* dataReps
 		def attributes = new FastVector()
 		
-		def diseaseLabels = new FastVector()
+		FastVector diseaseLabels = new FastVector()
 		FastVector symptomLabels = new FastVector()
 		symptomLabels.addElement("y")
 		symptomLabels.addElement("n")
@@ -130,7 +130,7 @@ class WekaService {
 		
 		attributes.addElement(new Attribute("disease_id", diseaseLabels))
 		
-		println "\t>Header built."
+		println "\t>Header built. DL: ${diseaseLabels.size()} ATTR: ${attributes.size()}"
 		return attributes
 	}
 	
@@ -158,15 +158,35 @@ class WekaService {
 				def symptoms = disease.symptoms()
 	
 				def i = 0
+				
+				def nonSymptoms = []
+				def unChanged = (symptoms.size() * noiseLevel/100) as int ?: 1
+				println "\tTotal symptoms: ${symptoms.size()} -- changed %: $unChanged"
 				symptomsList.each{ symptom -> 
 					if(symptom in symptoms){
-						values[i] = new Random().nextInt(101) > noiseLevel ? dataset.attribute("s${symptom.id}").indexOfValue("y") : dataset.attribute("s${symptom.id}").indexOfValue("n")
+						if(unChanged <= 0 || new Random().nextInt(101) > noiseLevel) {
+							values[i] = dataset.attribute("s${symptom.id}").indexOfValue("y") 
+							
+						} else if (unChanged > 0){
+							values[i] = dataset.attribute("s${symptom.id}").indexOfValue("n")
+							unChanged--
+						}
 					} else {
-						values[i] = new Random().nextInt(101) > noiseLevel ? dataset.attribute("s${symptom.id}").indexOfValue("n") : dataset.attribute("s${symptom.id}").indexOfValue("y")
+						values[i] = /*new Random().nextInt(101) > noiseLevel ? */dataset.attribute("s${symptom.id}").indexOfValue("n")/* : dataset.attribute("s${symptom.id}").indexOfValue("y")*/
+						nonSymptoms << [i: i, symptom:  symptom]
 					}
 					
 					i++
 				}	
+				println "\tChanged $unChanged of ${symptoms.size()}. Remaining: ${nonSymptoms.size()}"
+				while(unChanged > 0) {
+					Collections.shuffle(nonSymptoms, new Random())
+					def elem = nonSymptoms[0]
+					values[elem['i']] = dataset.attribute("s${elem['symptom'].id}").indexOfValue("y") 
+					nonSymptoms -= elem
+					unChanged--
+				}
+				println "\tForce changed ${unChanged}. Remaining: ${nonSymptoms.size()}"
 				values[i] = dataset.attribute("disease_id").indexOfValue(disease.id as String)
 				println "disease $disease.id done - $j of ${dataReps*set.size()}"
 				j++

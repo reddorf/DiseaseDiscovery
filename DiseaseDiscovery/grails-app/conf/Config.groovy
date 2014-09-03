@@ -71,7 +71,7 @@ environments {
     }
     production {
         grails.logging.jul.usebridge = false
-		classifierPath = "${dirSeparator}home${dirSeparator}mpinol${dirSeparator}classifiers"
+		classifierPath = "${dirSeparator}opt${dirSeparator}disease-models"
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }

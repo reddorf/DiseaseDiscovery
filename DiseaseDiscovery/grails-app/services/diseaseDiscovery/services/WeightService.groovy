@@ -45,7 +45,7 @@ class WeightService {
     }
 	
 	private getFileNames() {
-		def folder = new File(grailsApplication.config["classifierPath"])//new File("classifiers")
+		def folder = new File("clasifiers")
 		def list = []
 
 		folder.eachFile() { file->

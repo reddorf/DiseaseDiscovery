@@ -8,7 +8,6 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	
 	$("#autocomplete_match").change(function(){
 		setupAutocomplete(dataGetterLink);
-		alert("change!");
 	});
 	
 	$("#btn_addSymptom").click(function(){
@@ -18,12 +17,7 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	});
 	
 	$("#btn_submitSymptoms").click(function(){
-		if(!$("#sliders").html()){
-			$("#alert").html('<div class="alert alert-danger alert-dismissable fade in">' +
-				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-				     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
-				     '</div>');
-		} else if(!$("#elements").children().length) {
+		if(!$("#elements").children().length) {
 			$("#alert").html('<div class="alert alert-warning alert-dismissable fade in">' +
 				     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 				     '<strong> WARNING: </strong> The symptom list is empty.' +
@@ -38,25 +32,16 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 			$("#disease").html("");
 			
 			var sympts = [];
-			var weights = [];
 			
 			$("#elements").children().each(function() {
 				sympts.push($(this).attr('id'));
-			});
-			
-			$('[id^="name_"]').each(function(){
-				//weights.push([this.innerHTML,$("#val_" + this.innerHTML).html()]);
-				weights.push({
-					'classifier' : this.innerHTML,
-					'weight' : $("#val_" + this.innerHTML).html()
-				});
 			});
 			
 			$.when(
 					$.ajax({
 					type: "POST",
 					url: ajaxGetDiseaseURL,
-					data: {'symptoms' : sympts, 'weights': JSON.stringify(weights)},
+					data: {'symptoms' : sympts},
 					traditional: true,
 					dataType: "html",
 					success : function(response){
@@ -71,7 +56,13 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 					//$("#disease").html(response.object.name);
 					$("#prediction_dropdown").html(response);
 					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown" style="color: #000000;">Predicted Disease</a>');
-					$("#disease").html($("#predicted_disease").prop("value"));
+					//$("#disease").html($("#predicted_disease").prop("value"));
+					if($("#good_prediction").prop("value") > 0.5){
+						$("#disease").html($("#predicted_disease").prop("value"));
+					}
+					else {
+						$("#disease").html("<span style='color:red'>"+$("#predicted_disease").prop("value")+"</span>");
+					}
 					
 	//			}
 	//			else {
@@ -102,13 +93,6 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 	
 	
 	$("#btn_defaultWeights").click(function(){setModelSliders(ajaxModelURL)});
-	
-	if(!$("#sliders").html()){
-		$("#alert").html('<div class="alert alert-danger alert-dismissable fade in">' +
-			     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-			     '<strong> ERROR: </strong> There are no classifiers. Please contact the admin.' +
-			     '</div>');
-	}
 }
 
 function setupAutocomplete(dataGetterLink) {

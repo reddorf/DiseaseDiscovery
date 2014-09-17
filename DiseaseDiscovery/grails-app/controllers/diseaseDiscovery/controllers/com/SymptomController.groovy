@@ -7,7 +7,6 @@ import diseaseDiscovery.domain.com.Symptom;
 import grails.converters.JSON
 
 
-@Secured(['ROLE_ADMIN'])
 class SymptomController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
@@ -115,6 +114,7 @@ class SymptomController {
     }
 	
 	def getSymptoms(){
+		println "sip"
 		render Symptom.list() as JSON
 	}
 }

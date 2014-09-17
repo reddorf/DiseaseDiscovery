@@ -1,4 +1,5 @@
 <g:hiddenField name="predicted_disease" value="${predictedDisease.name}"/>
+<g:hiddenField name="good_prediction" value="${modelInfo[predictedDisease] > 0.5}"/>
 
 <div class="row">
 	<h4 class="col-md-offset-8 col-md-3">
@@ -10,9 +11,8 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>	
 		<tr>
-			<th>Model</th>
 			<th>Predicted Disease</th>
-			<th>Model Weight</th>
+			<th>Disease Score</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -24,9 +24,6 @@
 				<td>
 					${inst.value}
 				</td>
-<%--				<td>--%>
-<%--					${inst.value[1]}--%>
-<%--				</td>--%>
 			</tr>
 		</g:each>
 	</tbody>

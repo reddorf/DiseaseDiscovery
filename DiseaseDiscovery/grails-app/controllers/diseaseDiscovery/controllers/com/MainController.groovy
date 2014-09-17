@@ -34,10 +34,6 @@ class MainController {
 		medicalInformationService.populateDB()
 	}
 	
-	def getFiles() {
-		render weightService.getDefaultWeights() as JSON
-	}
-	
 	def getDiseasesByLetter(){
 		def dis = Disease.findAllByNameIlike("${params.letter}%")
 		
@@ -67,27 +63,13 @@ class MainController {
 	}
 	
 	def makePrediction(){
-		def weights = [:]
-		JSON.parse(params.weights).each{
-			weights[it.classifier] = it.weight.toFloat()///100
-		}
-
 		def symptIds = params.list('symptoms')
 		def symptoms = []
 		symptIds.each{
 			symptoms << Symptom.get(it)
 		}
 
-		def preds = predictionService.makePrediction(symptoms, weights)
-//		preds.all.each{ key, value ->
-//			preds.all[key] = [Disease.get(value[0]), value[1]]
-//		}
-//
-//		render (template: 'prediction',
-//				model: ['predictedDisease' : Disease.get(preds.prediction.key),
-//						'predictedWeight'  : preds.prediction.value,
-//						'modelInfo' : preds.all
-//						/*'diseases' : diseases, classified: predictions*/])
+		def preds = predictionService.makePrediction(symptoms)
 		render (template: 'prediction',
 							model: ['predictedDisease' : preds.prediction.key,
 									'predictedWeight'  : preds.prediction.value,

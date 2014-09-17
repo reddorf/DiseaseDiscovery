@@ -79,15 +79,20 @@ class MainController {
 		}
 
 		def preds = predictionService.makePrediction(symptoms, weights)
-		preds.all.each{ key, value ->
-			preds.all[key] = [Disease.get(value[0]), value[1]]
-		}
-
+//		preds.all.each{ key, value ->
+//			preds.all[key] = [Disease.get(value[0]), value[1]]
+//		}
+//
+//		render (template: 'prediction',
+//				model: ['predictedDisease' : Disease.get(preds.prediction.key),
+//						'predictedWeight'  : preds.prediction.value,
+//						'modelInfo' : preds.all
+//						/*'diseases' : diseases, classified: predictions*/])
 		render (template: 'prediction',
-				model: ['predictedDisease' : Disease.get(preds.prediction.key),
-						'predictedWeight'  : preds.prediction.value,
-						'modelInfo' : preds.all
-						/*'diseases' : diseases, classified: predictions*/])
+							model: ['predictedDisease' : preds.prediction.key,
+									'predictedWeight'  : preds.prediction.value,
+									'modelInfo' : preds.all
+									/*'diseases' : diseases, classified: predictions*/])
 	}
 	
 	@Secured(['ROLE_ADMIN'])

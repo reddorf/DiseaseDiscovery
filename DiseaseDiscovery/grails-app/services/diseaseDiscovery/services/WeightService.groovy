@@ -45,7 +45,7 @@ class WeightService {
     }
 	
 	private getFileNames() {
-		def folder = new File("clasifiers")
+		def folder = new File("classifiers")
 		def list = []
 
 		folder.eachFile() { file->

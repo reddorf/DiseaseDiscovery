@@ -19,14 +19,14 @@
 		<g:each in="${modelInfo}" status="i" var="inst">
 			<tr>
 				<td>
-					${inst.key}
+					${inst.key.name}
 				</td>
 				<td>
-					${inst.value[0].name}
+					${inst.value}
 				</td>
-				<td>
-					${inst.value[1]}
-				</td>
+<%--				<td>--%>
+<%--					${inst.value[1]}--%>
+<%--				</td>--%>
 			</tr>
 		</g:each>
 	</tbody>

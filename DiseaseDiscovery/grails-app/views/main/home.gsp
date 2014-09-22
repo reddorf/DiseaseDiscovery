@@ -60,11 +60,7 @@
 			    	<div class="panel-footer">
 			    		<div class="row">
 			    			<div class="col-md-9">
-								<h4 class="panel-title">
-							        <a data-toggle="collapse" data-parent="#accordion" href="#advanced_menu">
-							          Advanced
-							        </a>
-								</h4>
+								
 							</div>
 							<div class="col-md-2">
 								<button class="btn btn-default" id="btn_submitSymptoms"	type="button">
@@ -73,14 +69,7 @@
 					       	</div>
 						</div>
 			    	</div>
-			    	<div id="advanced_menu" class="panel-collapse collapse ">
-						<div id="modelList" class="panel-body">
-							<ul id="sliders"></ul>
-							<button class="btn btn-default" id="btn_defaultWeights"	type="button">
-					       		Default weights
-					       	</button>
-						</div>
-					</div>
+			    	
 				</div>
 			</div>
 			<div class="tab-pane" id="sympt-tab">
@@ -123,9 +112,10 @@
 	 		 		</h3>
 	 		 		<img id="loading" style="display:none;" src="${resource(dir: 'images', file: 'ajax-loader.gif')}" alt="Loading..."/>
 	 		 	</div>
-	 		 	<h4 class="col-md-offset-4 col-md-4">
+	 		 	<h4 class="col-md-offset-3 col-md-4">
 	 		 		<div id="disease"></div>
 	 		 	</h4>
+	 		 	<h4 class="col-md-1"><div id="warning-icon" data-toggle="tooltip" data-placement="top" title="This prediction has a very low score. The probability of this disease being a rare disease is under 0.0001%. Please check the symptom list."></div></h4>
 	 		</div>
 		</div>
 		<div id="prediction_dropdown" class="panel-collapse collapse padded">

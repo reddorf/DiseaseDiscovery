@@ -17,14 +17,16 @@
 	</thead>
 	<tbody>
 		<g:each in="${modelInfo}" status="i" var="inst">
-			<tr>
-				<td>
-					${inst.key.name}
-				</td>
-				<td>
-					${inst.value}
-				</td>
-			</tr>
+			<g:if test="${inst.value > 0.0}">
+				<tr>
+					<td>
+						${inst.key.name}
+					</td>
+					<td>
+						${inst.value}
+					</td>
+				</tr>
+			</g:if>
 		</g:each>
 	</tbody>
 </table>

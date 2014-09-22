@@ -57,11 +57,17 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 					$("#prediction_dropdown").html(response);
 					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown" style="color: #000000;">Predicted Disease</a>');
 					//$("#disease").html($("#predicted_disease").prop("value"));
-					if($("#good_prediction").prop("value") > 0.5){
+					if($("#good_prediction").prop("value") == "true"){
 						$("#disease").html($("#predicted_disease").prop("value"));
+						$("#warning-icon").html('');
 					}
 					else {
-						$("#disease").html("<span style='color:red'>"+$("#predicted_disease").prop("value")+"</span>");
+						//$("#disease").html("<span style='color:red'>"+$("#predicted_disease").prop("value")+"</span>");
+						$("#warning-icon").html("<span class='glyphicon glyphicon-warning-sign'></span>");
+						$("#warning-icon").tooltip({'selector': '',
+												    'placement': 'top',
+												    'container':'body'});
+						$("#disease").html(/*"<span style='color:red'>"+*/$("#predicted_disease").prop("value")/*+"</span>"*/);
 					}
 					
 	//			}

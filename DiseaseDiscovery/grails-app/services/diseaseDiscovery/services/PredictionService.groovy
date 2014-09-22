@@ -21,7 +21,7 @@ class PredictionService {
 			def n = ((sympts + symptoms) - sympts.intersect(symptoms)).size() // Get # of differences between the input and the disease's symptoms
 			def sDisease = sympts.size()
 			
-			predictions[it] = 1 - n/Math.max(sUser, sDisease)
+			predictions[it] = Math.max((1 - n/Math.max(sUser, sDisease)), 0.0)
 		}
 		
 		predictions = predictions.sort { a, b -> b.value <=> a.value } // Sort the map

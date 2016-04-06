@@ -11,8 +11,12 @@ class Symptom {
 		name blank: false, nullable: false
     }
 	
+	static mapping = {
+		sort name: "desc"
+	}
+	
 	def diseases() {
-		return symptomDisease.collect{ it.disease }
+		return symptomDisease.collect{ it.disease }?.sort {it.name}
 	}
 	
 	// Helper methods

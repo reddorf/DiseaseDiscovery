@@ -35,13 +35,13 @@ class MainController {
 	}
 	
 	def getDiseasesByLetter(){
-		def dis = Disease.findAllByNameIlike("${params.letter}%")
+		def dis = Disease.findAllByNameIlike("${params.letter}%", [sort: "name", order: "asc"])
 		
 		render (template: 'infotable', model: [instanceList: dis, instanceTotal: dis.size(), searchButton: true])
 	}
 	
 	def getSymptomsByLetter(){
-		def sympt = Symptom.findAllByNameIlike("${params.letter}%")
+		def sympt = Symptom.findAllByNameIlike("${params.letter}%", [sort: "name", order: "asc"])
 		
 		render (template: 'infotable', model: [instanceList: sympt, instanceTotal: sympt.size(), addButton: true, searchButton: true])
 	}

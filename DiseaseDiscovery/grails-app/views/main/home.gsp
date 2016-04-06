@@ -1,11 +1,14 @@
+<%@ page import="diseaseDiscovery.domain.com.Symptom" %>
+
 <!DOCTYPE html>
 <head>
 	<meta name="layout" content="main">
 	<title>Disease Discovery</title>
 	
-	<g:javascript src="symptomList.js"/>
 	<g:javascript>
 		$(document).ready(function() {
+			$('.combobox').combobox();
+		
 			setup(
 					"${createLink(controller: 'Symptom', action: 'getSymptoms')}",
 				  	"${createLink(controller: 'Main', action: 'makePrediction')}",
@@ -33,23 +36,31 @@
 					<div class="panel-heading">
 			 		 	
 			 		 	<div class="row">
-			 		 		<h3 class="panel-title col-lg-4">Symptoms List</h3>
-			 		 		<select id="autocomplete_match" class="autocomplete-option col-lg-2">
-			 		 			<option value="contains">containing</option>
-			 		 			<option value="begins_by">beginning with</option>
-			 		 		</select>
-							<div class="col-lg-6">
-						    	<div class="input-group">
-						 		 	<input type="text" class="form-control" name="symptom" id="symptom_name" 
-							  			   value="" placeholder="Enter symptom..." />
-						  			<input type="hidden" id="symptom_id" name="symptom_id" value="" />
-						      		<span class="input-group-btn">
+			 		 		<h3 class="panel-title col-lg-5">Symptoms List</h3>
+<%--			 		 		<select id="autocomplete_match" class="autocomplete-option col-lg-2">--%>
+<%--			 		 			<option value="contains">containing</option>--%>
+<%--			 		 			<option value="begins_by">beginning with</option>--%>
+<%--			 		 		</select>--%>
+							<div class="col-lg-7">
+<%--						 		 	<input type="text" class="form-control" name="symptom" id="symptom_name" --%>
+<%--							  			   value="" placeholder="Enter symptom..." />--%>
+<%--						  			<input type="hidden" id="symptom_id" name="symptom_id" value="" />--%>
+								<div class="col-lg-9">
+									<select id='sympts' class='combobox form-control heh'>
+										<option></option>
+										<g:each in="${Symptom.list()}">
+											<option value='${it.id}'>${it.name}</option>
+										</g:each>
+									</select>
+								</div>
+								<div class="col-lg-3">
+						      		<div class="input-group-btn">
 						        		<button class="btn btn-default" id="btn_addSymptom"	
 						        				type="button">
 						        			Add symptom
 						        		</button>
-						      		</span>
-						    	</div>
+						      		</div>
+						      	</div>
 							</div>
 						</div>
 					</div>
@@ -75,7 +86,7 @@
 			<div class="tab-pane" id="sympt-tab">
 				<ul id="letter-tabs" class="nav nav-pills nav-stacked">
 					<g:each in="${'A'..'Z'}">
-  						<li class="${it in symptomLetters ? it == symptomLetters[0] ? 'active':'':'disabled'}"><a href="#s_${it}" data-toggle="tab">${it}</a></li>
+  						<li class="${it in symptomLetters ? it == symptomLetters[0] ? '':'':'disabled'}"><a href="#s_${it}" data-toggle="tab">${it}</a></li>
   					</g:each>
 				</ul>
 				<div class="tab-content">
@@ -88,8 +99,9 @@
 			</div>
 			<div class="tab-pane" id="disease-tab">
 				<ul id="letter-tabs" class="nav nav-pills nav-stacked">
+					<li class="disabled" style="display:none"><a href="#d__1" data-toggle="tab"></a></li>
 					<g:each in="${'A'..'Z'}">
-  						<li class="${it in diseaseLetters ? it == diseaseLetters[0] ? 'active':'':'disabled'}"><a href="#d_${it}" data-toggle="tab">${it}</a></li>
+  						<li class="${it in diseaseLetters ? it == diseaseLetters[0] ? '':'':'disabled'}"><a href="#d_${it}" data-toggle="tab">${it}</a></li>
   					</g:each>
 				</ul>
 				<div class="tab-content">

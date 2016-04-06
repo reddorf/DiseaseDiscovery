@@ -27,6 +27,9 @@
         <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script> 
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 		
+		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-combobox.css')}" type="text/css">
+		<g:javascript src="bootstrap-combobox.js"/>
+		<g:javascript src="symptomList.js"/>
 		<r:layoutResources />
 	</head>
 	<body>

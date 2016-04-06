@@ -72,7 +72,7 @@ body {
 }
 
 a:link, a:visited, a:hover {
-	color: #48802c;
+	color: #FFFFFF;
 }
 
 a:hover, a:active {
@@ -624,4 +624,8 @@ a.skip {
 
 #sliders div {
     margin-bottom: 5px;
+}
+
+input, select, textarea {
+	color: #000000;
 }

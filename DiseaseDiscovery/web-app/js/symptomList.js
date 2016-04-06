@@ -3,17 +3,18 @@ var getComponentURL;
 function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, symptomsURL, getStuffURL){
 	getComponentURL = getStuffURL;
 	
-	setupAutocomplete(dataGetterLink);
-	setModelSliders(ajaxModelURL);
-	
-	$("#autocomplete_match").change(function(){
-		setupAutocomplete(dataGetterLink);
-	});
+//	setupAutocomplete(dataGetterLink);
+//	setModelSliders(ajaxModelURL);
+//	
+//	$("#autocomplete_match").change(function(){
+//		setupAutocomplete(dataGetterLink);
+//	});
 	
 	$("#btn_addSymptom").click(function(){
-		if($("#symptom_name").val() && $("#symptom_id").val()){
-			addSymptomToList($("#symptom_name").val(), $("#symptom_id").val());
+		if($("#sympts").find('option:selected').text() && $("#sympts").find('option:selected').val()){
+			addSymptomToList($("#sympts").find('option:selected').text(), $("#sympts").find('option:selected').val());
 		}
+		
 	});
 	
 	$("#btn_submitSymptoms").click(function(){
@@ -52,28 +53,22 @@ function setup(dataGetterLink, ajaxGetDiseaseURL, ajaxModelURL, diseasesURL, sym
 				$("#loading").hide();
 				$("#prediction_title").show();
 				$("#btn_submitSymptoms").prop('disabled', false);
-				//if(response.success){
-					//$("#disease").html(response.object.name);
-					$("#prediction_dropdown").html(response);
-					$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown" style="color: #000000;">Predicted Disease</a>');
-					//$("#disease").html($("#predicted_disease").prop("value"));
-					if($("#good_prediction").prop("value") == "true"){
-						$("#disease").html($("#predicted_disease").prop("value"));
-						$("#warning-icon").html('');
-					}
-					else {
-						//$("#disease").html("<span style='color:red'>"+$("#predicted_disease").prop("value")+"</span>");
-						$("#warning-icon").html("<span class='glyphicon glyphicon-warning-sign'></span>");
-						$("#warning-icon").tooltip({'selector': '',
-												    'placement': 'top',
-												    'container':'body'});
-						$("#disease").html(/*"<span style='color:red'>"+*/$("#predicted_disease").prop("value")/*+"</span>"*/);
-					}
-					
-	//			}
-	//			else {
-	//				alert("An error occurred");
-	//			}
+				
+				$("#prediction_dropdown").html(response);
+				$("#prediction_title").html('<a data-toggle="collapse" data-parent="#accordion" href="#prediction_dropdown" style="color: #000000;">Predicted Disease</a>');
+
+				if($("#good_prediction").prop("value") == "true"){
+//					$("#disease").html("<a href='http://www.orpha.net/consor/cgi-bin/Disease_Search_List.php?lng=EN&TAG='" + $("#predicted_disease").prop("value").charAt(0).toUpperCase() +">" + $("#predicted_disease").prop("value") + "</a>");
+					$("#warning-icon").html('');
+				}
+				else {
+					$("#warning-icon").html("<span class='glyphicon glyphicon-warning-sign'></span>");
+					$("#warning-icon").tooltip({'selector': '',
+											    'placement': 'top',
+											    'container':'body'});
+//					$("#disease").html("<a href='http://www.orpha.net/consor/cgi-bin/Disease_Search_List.php?lng=EN&TAG='" + $("#predicted_disease").prop("value").charAt(0).toUpperCase() +">" + $("#predicted_disease").prop("value") + "</a>");
+				}
+				$("#disease").html("<a target='_blank' href='http://www.orpha.net/consor/cgi-bin/Disease_Search_List.php?lng=EN&TAG=" + $("#predicted_disease").prop("value").charAt(0).toUpperCase() +"'>" + $("#predicted_disease").prop("value") + "</a>");
 			});
 		}
 	});
@@ -262,4 +257,26 @@ function getComponents(id, type) {
 
 function search(name){
 	window.open("http://search2.google.cit.nih.gov/search?q=" + name + "&btnG.x=0&btnG.y=0&client=NIHNEW_frontend&proxystylesheet=NIHNEW_frontend&output=xml_no_dtd&getfields=*&proxyreload=1&btnG.x=0&btnG.y=0&sort=date%3AD%3AL%3Ad1&oe=UTF-8&ie=UTF-8&ud=1&exclude_apps=1&site=NIH_Master");
+}
+
+function showInList(id, name) {
+	
+	
+	var firstLetter = name.charAt(0).toUpperCase();
+	
+	
+	var timer = setInterval(function() {
+		$('.nav-tabs a[href="#disease-tab"]').tab('show');
+		$('#letter-tabs a[href="#d_' + firstLetter + '"]').tab('show');
+	   if ($("#d_" + firstLetter).hasClass("active in")) {
+		   $('html, body').animate({
+		        scrollTop: $("#toggle_" + id).offset().top
+		    }, 0);
+			if(!$("#collapse_" + id).hasClass("collapse in")) {
+				$("#toggle_" + id).click();
+			}
+	       clearInterval(timer);
+	   }
+	}, 100);
+	
 }

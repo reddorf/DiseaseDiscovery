@@ -20,7 +20,7 @@
 			<g:if test="${inst.value > 0.0}">
 				<tr>
 					<td>
-						${inst.key.name}
+						<a href="#" id="${inst.key.name}" onclick="showInList('${inst.key.id}', '${inst.key.name}');" style="color:black">${inst.key.name}</a>
 					</td>
 					<td>
 						${inst.value}
